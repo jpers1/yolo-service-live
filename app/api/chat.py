@@ -13,7 +13,7 @@ from app.schemas.openai import (
     ChatCompletionsRequest,
     ChatContentPart,
 )
-from app.vision.fake_detector import detect_mock_image_url
+from app.vision.detector import get_app_detector
 from app.vision.image_decode import ImageDecodeError, decode_image_data_url
 
 router = APIRouter(prefix="/v1", dependencies=[Depends(require_api_key)])
@@ -78,7 +78,8 @@ async def create_chat_completion(
             code=exc.code,
         ) from exc
 
-    detection_payload = detect_mock_image_url(
+    detector = get_app_detector(http_request)
+    detection_payload = detector.detect(
         model=settings.public_model_name,
         image=decoded_image,
     )

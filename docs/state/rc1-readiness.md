@@ -4,7 +4,7 @@ Status: not started.
 
 ## Summary
 
-RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, mocked `POST /v1/chat/completions`, safe base64 JPEG/PNG image decoding, and CI-backed test coverage, but no real detector integration yet.
+RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, mocked `POST /v1/chat/completions`, safe base64 JPEG/PNG image decoding, a detector abstraction backed by a fake detector, and CI-backed test coverage, but no real YOLO integration yet.
 
 ## Readiness matrix
 
@@ -23,7 +23,8 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | Testing baseline | Implemented | `scripts/check.sh`, `pyproject.toml`, `tests/` | Full local suite plus 80% app coverage threshold |
 | `/v1/chat/completions` | Mocked | `app/api/chat.py`, `tests/test_chat_completions.py` | Contract implemented with decoded image input and mocked detector response; no real YOLO inference |
 | Image decoding | Implemented | `app/vision/image_decode.py`, `tests/test_image_decode.py` | Base64 JPEG/PNG data URLs with MIME, payload, and pixel validation |
-| Fake detector tests | Implemented | `app/vision/fake_detector.py`, `tests/test_detection_schema.py` | Placeholder detector for chat contract only |
+| Detector abstraction | Implemented | `app/vision/detector.py`, `app/vision/fake_detector.py`, `tests/test_detector.py` | Chat endpoint uses app-state detector interface with fake detector |
+| Fake detector tests | Implemented | `app/vision/fake_detector.py`, `tests/test_detector.py` | Placeholder detector for chat contract only |
 | Real YOLO11n CPU inference | Missing | None | Not implemented |
 | Native detection endpoint | Missing | None | Not implemented |
 | Docker | Missing | None | Not implemented |
@@ -37,7 +38,6 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 
 ## RC1 blockers
 
-- No detector abstraction implemented yet.
 - No real YOLO inference implemented yet.
 - No model smoke test.
 - No deployment artifact.

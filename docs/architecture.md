@@ -98,6 +98,14 @@ The OpenAI-compatible adapter should:
 - return an OpenAI-shaped response envelope;
 - place structured detection JSON in `choices[0].message.content`.
 
+Current implementation path:
+
+```text
+chat endpoint -> image decoder -> detector interface -> fake detector
+```
+
+The detector is stored on FastAPI app state so tests and future runtime wiring can inject a different implementation. Real YOLO inference remains planned but is not implemented yet.
+
 ## Native vision endpoint
 
 The native endpoint should be simpler than chat completions:

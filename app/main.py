@@ -5,10 +5,13 @@ from app.api.health import router as health_router
 from app.api.models import router as models_router
 from app.config import Settings, get_settings
 from app.errors import OpenAIError, openai_error_handler
+from app.vision.detector import Detector
+from app.vision.fake_detector import FakeDetector
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, detector: Detector | None = None) -> FastAPI:
     resolved_settings = settings or get_settings()
+    resolved_detector = detector or FakeDetector()
 
     app = FastAPI(
         title=resolved_settings.service_name,
@@ -16,6 +19,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         description="CPU-only YOLO11 object detection service with OpenAI-compatible API endpoints.",
     )
     app.state.settings = resolved_settings
+    app.state.detector = resolved_detector
     app.add_exception_handler(OpenAIError, openai_error_handler)
     app.include_router(health_router)
     app.include_router(chat_router)

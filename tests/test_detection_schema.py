@@ -1,5 +1,4 @@
 from app.schemas.detections import Detection, DetectionPayload, DetectionSource
-from app.vision.fake_detector import detect_mock_image_url
 
 
 def test_detection_payload_serializes_expected_shape() -> None:
@@ -45,17 +44,3 @@ def test_detection_payload_serializes_expected_shape() -> None:
         ],
         "mock": True,
     }
-
-
-def test_fake_detector_returns_mock_image_url_payload() -> None:
-    payload = detect_mock_image_url(model="configured-model")
-
-    assert payload.model == "configured-model"
-    assert payload.task == "object_detection"
-    assert payload.source.kind == "image_url"
-    assert payload.source.decoded is False
-    assert payload.source.mime_type is None
-    assert payload.source.width is None
-    assert payload.source.height is None
-    assert payload.mock is True
-    assert len(payload.detections) == 1
