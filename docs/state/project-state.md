@@ -4,16 +4,18 @@ Last updated: 2026-06-15
 
 ## Current truth
 
-The repository now has an importable FastAPI skeleton on `main`.
+The repository now has an importable FastAPI service skeleton with typed configuration loading and public health/readiness endpoints.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
 Merged PR #3 synchronized durable state docs with the FastAPI skeleton baseline.
 
+Merged PR #4 added the strategic review gate and GPT-5.5 work-unit sizing policy.
+
 Current baseline merge commit:
 
 ```text
-0bf1360b0198250b742c7a06445bb19deaa45b40
+88e5c58d473f39aa05705ddf036081761209efd1
 ```
 
 ## Product goal
@@ -56,20 +58,30 @@ Phase 1: FastAPI shell.
 - state docs
 - `pyproject.toml`
 - `app/__init__.py`
+- `app/api/__init__.py`
+- `app/api/health.py`
+- `app/config.py`
 - `app/main.py`
 - `tests/__init__.py`
 - `tests/test_app_factory.py`
+- `tests/test_config.py`
+- `tests/test_health.py`
 - minimal FastAPI app factory
 - module-level `app`
+- typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
+- settings stored on `app.state.settings`
+- public `/healthz`
+- public `/readyz`
 - focused app-factory test
+- focused config tests
+- focused health/readiness endpoint tests
 - foundational runtime and test dependencies only
 
 ## Not implemented yet
 
-- Configuration loading.
 - Auth.
-- Health endpoints.
-- OpenAI-compatible endpoints.
+- `/v1/models`.
+- `/v1/chat/completions`.
 - Image decoding.
 - Detector abstraction.
 - Real YOLO inference.
@@ -93,18 +105,16 @@ Phase 1: FastAPI shell.
 
 ## Next recommended task
 
-Add configuration loading only.
-
-After that, add health and readiness endpoints.
+Add Bearer authentication plus `/v1/models`.
 
 Suggested branch:
 
 ```text
-feature/003-config-loading
+feature/005-auth-and-models
 ```
 
 Suggested commit message:
 
 ```text
-Add config loading
+Add auth and model listing
 ```
