@@ -1,6 +1,6 @@
 # Testing Strategy
 
-Status: initial design.
+Status: active baseline.
 
 ## Testing principle
 
@@ -69,11 +69,33 @@ Later optional tests:
 
 ## Required commands
 
-Once tooling exists, expected commands:
+Run the full local verification command before every implementation PR report unless a work order explicitly says otherwise:
+
+```bash
+scripts/check.sh
+```
+
+The script runs:
+
+```bash
+python -m pytest
+ruff check app tests
+git diff --check
+```
+
+Focused tests are useful during development, for example:
+
+```bash
+python -m pytest tests/test_auth.py
+```
+
+Focused tests are not enough for the final PR report unless the work order explicitly narrows verification.
+
+CI runs lint plus full tests with coverage:
 
 ```bash
 ruff check app tests
-pytest
+python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=80
 ```
 
 Optional later:
@@ -82,6 +104,18 @@ Optional later:
 mypy app
 pytest -m integration
 ```
+
+## Coverage
+
+Coverage is measured for `app`.
+
+The initial required threshold is 80%:
+
+```bash
+python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=80
+```
+
+Raise the threshold only when the codebase and tests make that realistic without gaming coverage.
 
 ## Reporting vocabulary
 
@@ -95,13 +129,17 @@ Reports must distinguish:
 
 Do not report skipped tests as passed.
 
+Skipped tests and tests that were not run are not passing tests.
+
 ## Minimum CI for early repository
 
-CI should initially run:
+CI runs on pull requests and pushes to `main`.
+
+The baseline workflow runs:
 
 ```bash
-ruff check
-pytest
+ruff check app tests
+python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=80
 ```
 
 Real model download should not be mandatory in first CI unless explicitly planned.

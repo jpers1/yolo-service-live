@@ -14,6 +14,12 @@ def test_auth_accepts_correct_bearer_token() -> None:
     assert response.status_code == 200
 
 
+def test_auth_accepts_bearer_scheme_case_insensitively() -> None:
+    response = _client().get("/v1/models", headers={"Authorization": "bearer correct-test-key"})
+
+    assert response.status_code == 200
+
+
 def test_missing_server_api_key_fails_closed() -> None:
     response = _client(api_key=None).get(
         "/v1/models",
@@ -52,6 +58,14 @@ def test_wrong_auth_scheme_fails() -> None:
 
 def test_empty_bearer_token_fails() -> None:
     response = _client().get("/v1/models", headers={"Authorization": "Bearer "})
+
+    assert response.status_code == 401
+    assert response.json()["error"]["code"] == "missing_api_key"
+    assert response.headers["WWW-Authenticate"] == "Bearer"
+
+
+def test_whitespace_only_bearer_token_fails() -> None:
+    response = _client().get("/v1/models", headers={"Authorization": "Bearer    "})
 
     assert response.status_code == 401
     assert response.json()["error"]["code"] == "missing_api_key"

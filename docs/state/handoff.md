@@ -39,7 +39,7 @@ docs/decisions/
 
 ## Current implementation state
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, and `GET /v1/models`.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Implemented in PR #2:
 
@@ -59,6 +59,8 @@ Implemented after the skeleton:
 - `app/auth.py`
 - `app/errors.py`
 - `app/api/models.py`
+- `.github/workflows/ci.yml`
+- `scripts/check.sh`
 - typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
 - settings stored on `app.state.settings`
 - public `/healthz`
@@ -67,8 +69,12 @@ Implemented after the skeleton:
 - fail-closed behavior when server API key is missing
 - OpenAI-like error responses for auth/config failures
 - protected `GET /v1/models`
+- full local verification script running pytest, Ruff, and diff whitespace checks
+- CI running Ruff plus pytest coverage on pull requests and pushes to `main`
+- coverage baseline for `app` with 80% threshold
 - focused auth tests
 - focused config tests
+- focused error helper tests
 - focused health/readiness endpoint tests
 - focused model-list tests
 
