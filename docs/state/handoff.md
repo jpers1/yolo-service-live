@@ -69,6 +69,7 @@ Implemented after the skeleton:
 - `.github/workflows/ci.yml`
 - `scripts/check.sh`
 - `scripts/smoke_yolo.py`
+- `scripts/smoke_chat_yolo.py`
 - typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
 - settings stored on `app.state.settings`
 - public `/healthz`
@@ -87,6 +88,8 @@ Implemented after the skeleton:
 - YOLO detector loads Ultralytics lazily on first detection
 - optional `yolo` dependency extra for manual/runtime real inference
 - manual real-model smoke script
+- manual API-level YOLO chat-completions smoke script
+- real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
 - MIME allowlist validation
@@ -105,7 +108,7 @@ Implemented after the skeleton:
 - focused image decoding tests
 - focused model-list tests
 
-Normal CI avoids real YOLO downloads by using fake detectors and fake YOLO model objects.
+Normal CI avoids real YOLO downloads by using fake detectors and fake YOLO model objects. Manual smoke verification on 2026-06-15 completed direct detector and chat-completions YOLO runtime paths with `mock=false` in the API response.
 
 ## Next step
 

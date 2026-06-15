@@ -39,9 +39,14 @@ The first real inference may download model weights through Ultralytics if the w
 Normal CI does not run real model inference and does not install the optional YOLO extra. Real-model verification is manual:
 
 ```bash
-python -m pip install -e ".[yolo]"
+python -m pip install -e ".[dev,yolo]"
 python scripts/smoke_yolo.py
+python scripts/smoke_chat_yolo.py
 ```
+
+Last local smoke verification on 2026-06-15 completed on CPU with a generated 64x64 white JPEG image. Both the direct detector smoke and API chat smoke completed with `detections=0`; the API response reported `mock=false`.
+
+This is runtime evidence only, not a performance benchmark. It should not be used to claim high FPS, production throughput, or production readiness.
 
 ## Browser demo target
 

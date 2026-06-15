@@ -25,7 +25,7 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | Image decoding | Implemented | `app/vision/image_decode.py`, `tests/test_image_decode.py` | Base64 JPEG/PNG data URLs with MIME, payload, and pixel validation |
 | Detector abstraction | Implemented | `app/vision/detector.py`, `app/vision/fake_detector.py`, `tests/test_detector.py` | Chat endpoint uses app-state detector interface with fake detector |
 | Fake detector tests | Implemented | `app/vision/fake_detector.py`, `tests/test_detector.py` | Placeholder detector for chat contract only |
-| Real YOLO11n CPU inference | Implemented | `app/vision/yolo_detector.py`, `tests/test_yolo_detector.py`, `scripts/smoke_yolo.py` | Optional YOLO backend runs on CPU; normal CI uses fake model objects |
+| Real YOLO11n CPU inference | Smoke verified | `app/vision/yolo_detector.py`, `tests/test_yolo_detector.py`, `scripts/smoke_yolo.py`, `scripts/smoke_chat_yolo.py` | Optional YOLO backend runs on CPU; manual direct and API smokes completed locally; normal CI uses fake model objects |
 | Native detection endpoint | Missing | None | Not implemented |
 | Docker | Missing | None | Not implemented |
 | CI | Implemented | `.github/workflows/ci.yml` | Ruff plus pytest coverage on PRs and `main` |
@@ -33,7 +33,7 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | CPU backpressure | Missing | None | Not implemented |
 | Security hardening | Missing | None | Not implemented |
 | OpenAI Python example | Missing | None | Not verified |
-| Manual YOLO smoke test | Implemented | `scripts/smoke_yolo.py` | Manual-only; not run in normal CI |
+| Manual YOLO smoke test | Smoke verified | `scripts/smoke_yolo.py`, `scripts/smoke_chat_yolo.py` | Manual-only; both direct and API smokes completed locally on 2026-06-15 |
 | License note | Planned | `docs/model-card.md` | Initial warning generated |
 
 ## RC1 blockers
