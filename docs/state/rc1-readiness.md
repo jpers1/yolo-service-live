@@ -14,7 +14,7 @@ RC1 is not ready. No application code exists yet.
 | Architecture docs | Planned | `docs/architecture.md` | Initial version generated |
 | API contract | Planned | `docs/api-contract.md` | Initial version generated |
 | Security docs | Planned | `docs/security.md` | Initial version generated |
-| FastAPI service | Missing | None | Not implemented |
+| FastAPI service | Implemented | `app/main.py` | Minimal app factory only; no endpoints yet |
 | Config loading | Missing | None | Not implemented |
 | Bearer auth | Missing | None | Not implemented |
 | `/healthz` | Missing | None | Not implemented |

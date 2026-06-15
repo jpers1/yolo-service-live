@@ -4,9 +4,15 @@ Last updated: 2026-06-15
 
 ## Current truth
 
-Initial repository state package generated.
+The repository now has an importable FastAPI skeleton on `main`.
 
-No application code is assumed to exist yet.
+Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
+
+Current baseline merge commit:
+
+```text
+ba88f8f9f434873afe41540bc3899c07a902cb2b
+```
 
 ## Product goal
 
@@ -26,11 +32,9 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 0: governance and documentation.
+Phase 1: FastAPI shell.
 
 ## Implemented
-
-Planned initial insertion:
 
 - `AGENTS.md`
 - `README.md`
@@ -48,18 +52,26 @@ Planned initial insertion:
 - `docs/release-criteria.md`
 - decision records
 - state docs
+- `pyproject.toml`
+- `app/__init__.py`
+- `app/main.py`
+- `tests/__init__.py`
+- `tests/test_app_factory.py`
+- minimal FastAPI app factory
+- module-level `app`
+- focused app-factory test
+- foundational runtime and test dependencies only
 
 ## Not implemented yet
 
-- Python project structure.
-- FastAPI app.
+- Configuration loading.
 - Auth.
 - Health endpoints.
 - OpenAI-compatible endpoints.
 - Image decoding.
 - Detector abstraction.
 - Real YOLO inference.
-- Tests.
+- Native detection endpoint.
 - Docker.
 - Browser demo.
 - CI.
@@ -78,22 +90,18 @@ Planned initial insertion:
 
 ## Next recommended task
 
-Create the initial repository files from this package and commit them as the first governance/documentation commit.
+Add configuration loading only.
+
+After that, add health and readiness endpoints.
 
 Suggested branch:
 
 ```text
-docs/initial-oap-constitution
+feature/003-config-loading
 ```
 
 Suggested commit message:
 
 ```text
-Add initial OAP constitution and project state docs
+Add config loading
 ```
-
-## Next coding-agent task after insertion
-
-PR 1.1: Add Python project structure with `pyproject.toml`, empty `app/`, empty `tests/`, and initial tooling configuration.
-
-Do not implement FastAPI endpoints in the same PR.
