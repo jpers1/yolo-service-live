@@ -73,6 +73,8 @@ data:image/jpeg;base64,...
 data:image/png;base64,...
 ```
 
+The service validates image input by requiring base64 data URLs, using a JPEG/PNG MIME allowlist, decoding base64 with strict validation, opening the image with Pillow, and enforcing configured payload and pixel limits.
+
 MVP rejected input:
 
 ```text
@@ -97,6 +99,15 @@ The service must enforce:
 - concurrency/busy behavior once available.
 
 Exact values are configured by environment and documented in `.env.example`.
+
+Current defaults:
+
+```text
+YOLO_SERVICE_MAX_REQUEST_BYTES=5242880
+YOLO_SERVICE_MAX_IMAGE_PIXELS=4194304
+```
+
+Image bytes are decoded in memory only. The service must not write uploaded image bytes to disk, persist request bodies, log base64 payloads, or return raw image bytes in API responses.
 
 ## Logging
 

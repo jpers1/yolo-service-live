@@ -1,10 +1,19 @@
 from app.schemas.detections import Detection, DetectionPayload, DetectionSource
+from app.vision.image_decode import DecodedImage
 
 
-def detect_mock_image_url(*, model: str) -> DetectionPayload:
+def detect_mock_image_url(*, model: str, image: DecodedImage | None = None) -> DetectionPayload:
+    source = DetectionSource(
+        kind="image_url",
+        decoded=image is not None,
+        mime_type=image.mime_type if image else None,
+        width=image.width if image else None,
+        height=image.height if image else None,
+    )
+
     return DetectionPayload(
         model=model,
-        source=DetectionSource(kind="image_url", decoded=False),
+        source=source,
         detections=[
             Detection(
                 class_id=0,

@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     public_model_name: str = "yolo11n-coco"
     model_weights: str = "yolo11n.pt"
     default_confidence: float = Field(default=0.25, ge=0.0, le=1.0)
+    max_request_bytes: int = Field(default=5_242_880, ge=1)
+    max_image_pixels: int = Field(default=4_194_304, ge=1)
 
 
 @lru_cache

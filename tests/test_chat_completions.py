@@ -1,25 +1,47 @@
 import json
+import base64
+from io import BytesIO
 from typing import Any
 
 from fastapi.testclient import TestClient
+from PIL import Image
 
 from app.config import Settings
 from app.main import create_app
 
 
-def _client(api_key: str | None = "test-key", public_model_name: str = "yolo11n-coco") -> TestClient:
+def _client(
+    api_key: str | None = "test-key",
+    public_model_name: str = "yolo11n-coco",
+    max_request_bytes: int = 5_242_880,
+    max_image_pixels: int = 4_194_304,
+) -> TestClient:
     return TestClient(
         create_app(
             Settings(
                 api_key=api_key,
                 public_model_name=public_model_name,
+                max_request_bytes=max_request_bytes,
+                max_image_pixels=max_image_pixels,
                 _env_file=None,
             )
         )
     )
 
 
-def _valid_request(model: str = "yolo11n-coco") -> dict[str, Any]:
+def _image_data_url(
+    *,
+    mime_type: str = "image/jpeg",
+    image_format: str = "JPEG",
+    size: tuple[int, int] = (2, 3),
+) -> str:
+    buffer = BytesIO()
+    Image.new("RGB", size, color=(255, 0, 0)).save(buffer, format=image_format)
+    encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
+    return f"data:{mime_type};base64,{encoded}"
+
+
+def _valid_request(model: str = "yolo11n-coco", image_url: str | None = None) -> dict[str, Any]:
     return {
         "model": model,
         "messages": [
@@ -29,7 +51,7 @@ def _valid_request(model: str = "yolo11n-coco") -> dict[str, Any]:
                     {"type": "text", "text": "detect objects"},
                     {
                         "type": "image_url",
-                        "image_url": {"url": "data:image/jpeg;base64,placeholder"},
+                        "image_url": {"url": image_url or _image_data_url()},
                     },
                 ],
             }
@@ -78,10 +100,22 @@ def test_authenticated_valid_request_returns_chat_completion() -> None:
     assert body["choices"][0]["finish_reason"] == "stop"
 
 
-def test_assistant_message_content_is_valid_mock_detection_json() -> None:
+def test_authenticated_valid_png_request_returns_chat_completion() -> None:
     response = _client().post(
         "/v1/chat/completions",
-        json=_valid_request(),
+        json=_valid_request(image_url=_image_data_url(mime_type="image/png", image_format="PNG")),
+        headers=_auth_headers(),
+    )
+
+    assert response.status_code == 200
+    assert response.json()["object"] == "chat.completion"
+
+
+def test_assistant_message_content_is_valid_mock_detection_json() -> None:
+    image_url = _image_data_url()
+    response = _client().post(
+        "/v1/chat/completions",
+        json=_valid_request(image_url=image_url),
         headers=_auth_headers(),
     )
 
@@ -91,8 +125,15 @@ def test_assistant_message_content_is_valid_mock_detection_json() -> None:
     assert isinstance(content, str)
     assert parsed_content["task"] == "object_detection"
     assert parsed_content["model"] == "yolo11n-coco"
-    assert parsed_content["source"] == {"kind": "image_url", "decoded": False}
+    assert parsed_content["source"] == {
+        "kind": "image_url",
+        "decoded": True,
+        "mime_type": "image/jpeg",
+        "width": 2,
+        "height": 3,
+    }
     assert parsed_content["mock"] is True
+    assert image_url not in response.text
     assert len(parsed_content["detections"]) == 1
     assert parsed_content["detections"][0] == {
         "class_id": 0,
@@ -134,7 +175,7 @@ def test_multiple_images_return_openai_like_error() -> None:
     request_body["messages"][0]["content"].append(
         {
             "type": "image_url",
-            "image_url": {"url": "data:image/png;base64,placeholder"},
+            "image_url": {"url": _image_data_url(mime_type="image/png", image_format="PNG")},
         }
     )
 
@@ -177,6 +218,74 @@ def test_secret_api_key_does_not_appear_in_error_response() -> None:
     response = _client(api_key="secret-chat-key").post(
         "/v1/chat/completions",
         json=_valid_request(model="unknown-model"),
+        headers=_auth_headers("secret-chat-key"),
+    )
+
+    assert response.status_code == 400
+    assert "secret-chat-key" not in response.text
+
+
+def test_external_image_url_returns_openai_like_error() -> None:
+    response = _client().post(
+        "/v1/chat/completions",
+        json=_valid_request(image_url="https://example.test/image.jpg"),
+        headers=_auth_headers(),
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"]["code"] == "external_image_url_not_supported"
+    assert "example.test" not in response.text
+
+
+def test_unsupported_image_mime_returns_openai_like_error() -> None:
+    response = _client().post(
+        "/v1/chat/completions",
+        json=_valid_request(image_url="data:image/gif;base64,AAAA"),
+        headers=_auth_headers(),
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"]["code"] == "unsupported_image_mime"
+
+
+def test_invalid_base64_returns_openai_like_error() -> None:
+    response = _client().post(
+        "/v1/chat/completions",
+        json=_valid_request(image_url="data:image/jpeg;base64,not-valid!!!"),
+        headers=_auth_headers(),
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"]["code"] == "invalid_image_data"
+    assert "not-valid" not in response.text
+
+
+def test_oversized_image_returns_openai_like_error() -> None:
+    response = _client(max_image_pixels=5).post(
+        "/v1/chat/completions",
+        json=_valid_request(image_url=_image_data_url(size=(3, 3))),
+        headers=_auth_headers(),
+    )
+
+    assert response.status_code == 413
+    assert response.json()["error"]["code"] == "image_too_large"
+
+
+def test_oversized_request_body_returns_openai_like_error() -> None:
+    response = _client(max_request_bytes=100).post(
+        "/v1/chat/completions",
+        json=_valid_request(),
+        headers=_auth_headers(),
+    )
+
+    assert response.status_code == 413
+    assert response.json()["error"]["code"] == "payload_too_large"
+
+
+def test_secret_api_key_does_not_appear_in_image_error_response() -> None:
+    response = _client(api_key="secret-chat-key").post(
+        "/v1/chat/completions",
+        json=_valid_request(image_url="data:image/jpeg;base64,not-valid!!!"),
         headers=_auth_headers("secret-chat-key"),
     )
 

@@ -14,6 +14,9 @@ class Detection(BaseModel):
 class DetectionSource(BaseModel):
     kind: Literal["image_url"]
     decoded: bool
+    mime_type: str | None = None
+    width: int | None = None
+    height: int | None = None
 
 
 class DetectionPayload(BaseModel):

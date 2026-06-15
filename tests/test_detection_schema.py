@@ -5,7 +5,13 @@ from app.vision.fake_detector import detect_mock_image_url
 def test_detection_payload_serializes_expected_shape() -> None:
     payload = DetectionPayload(
         model="yolo11n-coco",
-        source=DetectionSource(kind="image_url", decoded=False),
+        source=DetectionSource(
+            kind="image_url",
+            decoded=True,
+            mime_type="image/jpeg",
+            width=2,
+            height=3,
+        ),
         detections=[
             Detection(
                 class_id=0,
@@ -21,7 +27,13 @@ def test_detection_payload_serializes_expected_shape() -> None:
     assert payload.model_dump() == {
         "task": "object_detection",
         "model": "yolo11n-coco",
-        "source": {"kind": "image_url", "decoded": False},
+        "source": {
+            "kind": "image_url",
+            "decoded": True,
+            "mime_type": "image/jpeg",
+            "width": 2,
+            "height": 3,
+        },
         "detections": [
             {
                 "class_id": 0,
@@ -42,5 +54,8 @@ def test_fake_detector_returns_mock_image_url_payload() -> None:
     assert payload.task == "object_detection"
     assert payload.source.kind == "image_url"
     assert payload.source.decoded is False
+    assert payload.source.mime_type is None
+    assert payload.source.width is None
+    assert payload.source.height is None
     assert payload.mock is True
     assert len(payload.detections) == 1
