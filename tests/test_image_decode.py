@@ -35,6 +35,9 @@ def test_valid_jpeg_data_url_decodes() -> None:
     assert image.height == 3
     assert image.mode == "RGB"
     assert image.format == "JPEG"
+    assert isinstance(image.image, Image.Image)
+    assert image.image.mode == "RGB"
+    assert image.image.size == (2, 3)
 
 
 def test_valid_png_data_url_decodes() -> None:

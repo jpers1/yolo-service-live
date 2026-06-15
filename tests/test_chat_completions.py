@@ -8,7 +8,9 @@ from PIL import Image
 
 from app.config import Settings
 from app.main import create_app
-from app.schemas.detections import DetectionPayload, DetectionSource
+from app.schemas.detections import Detection, DetectionPayload, DetectionSource
+from app.vision.detector import DetectorInferenceError, DetectorUnavailableError
+from app.vision.fake_detector import FakeDetector
 from app.vision.image_decode import DecodedImage
 
 
@@ -32,11 +34,46 @@ class RecordingDetector:
         )
 
 
+class NonFakeDetector:
+    def detect(self, *, image: DecodedImage, model: str) -> DetectionPayload:
+        return DetectionPayload(
+            model=model,
+            source=DetectionSource(
+                kind="image_url",
+                decoded=True,
+                mime_type=image.mime_type,
+                width=image.width,
+                height=image.height,
+            ),
+            detections=[
+                Detection(
+                    class_id=1,
+                    class_name="bicycle",
+                    confidence=0.75,
+                    box_xyxy=[1.0, 2.0, 3.0, 4.0],
+                    box_normalized_xyxy=[0.1, 0.2, 0.3, 0.4],
+                )
+            ],
+            mock=False,
+        )
+
+
+class UnavailableDetector:
+    def detect(self, *, image: DecodedImage, model: str) -> DetectionPayload:
+        raise DetectorUnavailableError("missing dependency with secret-chat-key")
+
+
+class FailingDetector:
+    def detect(self, *, image: DecodedImage, model: str) -> DetectionPayload:
+        raise DetectorInferenceError("failed with image payload")
+
+
 def _client(
     api_key: str | None = "test-key",
     public_model_name: str = "yolo11n-coco",
     max_request_bytes: int = 5_242_880,
     max_image_pixels: int = 4_194_304,
+    detector=None,
 ) -> TestClient:
     return TestClient(
         create_app(
@@ -46,7 +83,8 @@ def _client(
                 max_request_bytes=max_request_bytes,
                 max_image_pixels=max_image_pixels,
                 _env_file=None,
-            )
+            ),
+            detector=detector or FakeDetector(),
         )
     )
 
@@ -200,6 +238,59 @@ def test_chat_completions_uses_injected_detector() -> None:
     }
     assert content["detections"] == []
     assert content["mock"] is True
+
+
+def test_chat_completions_can_use_injected_non_fake_detector() -> None:
+    response = _client(detector=NonFakeDetector()).post(
+        "/v1/chat/completions",
+        json=_valid_request(),
+        headers=_auth_headers(),
+    )
+
+    assert response.status_code == 200
+    content = json.loads(response.json()["choices"][0]["message"]["content"])
+    assert content["mock"] is False
+    assert content["detections"] == [
+        {
+            "class_id": 1,
+            "class_name": "bicycle",
+            "confidence": 0.75,
+            "box_xyxy": [1.0, 2.0, 3.0, 4.0],
+            "box_normalized_xyxy": [0.1, 0.2, 0.3, 0.4],
+        }
+    ]
+
+
+def test_detector_unavailable_returns_openai_like_error_without_secrets_or_payload() -> None:
+    image_url = _image_data_url()
+    encoded_payload = image_url.partition(",")[2]
+
+    response = _client(api_key="secret-chat-key", detector=UnavailableDetector()).post(
+        "/v1/chat/completions",
+        json=_valid_request(image_url=image_url),
+        headers=_auth_headers("secret-chat-key"),
+    )
+
+    assert response.status_code == 503
+    assert response.json()["error"]["code"] == "detector_not_available"
+    assert "secret-chat-key" not in response.text
+    assert encoded_payload not in response.text
+
+
+def test_detector_inference_error_returns_openai_like_error_without_secrets_or_payload() -> None:
+    image_url = _image_data_url()
+    encoded_payload = image_url.partition(",")[2]
+
+    response = _client(api_key="secret-chat-key", detector=FailingDetector()).post(
+        "/v1/chat/completions",
+        json=_valid_request(image_url=image_url),
+        headers=_auth_headers("secret-chat-key"),
+    )
+
+    assert response.status_code == 500
+    assert response.json()["error"]["code"] == "inference_failed"
+    assert "secret-chat-key" not in response.text
+    assert encoded_payload not in response.text
 
 
 def test_unsupported_model_returns_openai_like_error() -> None:

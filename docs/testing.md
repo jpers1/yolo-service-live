@@ -57,6 +57,15 @@ Manual or integration tests should prove:
 
 These tests may be skipped in CI unless explicitly enabled.
 
+The current manual smoke command is:
+
+```bash
+python -m pip install -e ".[yolo]"
+python scripts/smoke_yolo.py
+```
+
+The script may trigger model download on first run. It is not part of normal CI.
+
 ### Browser demo tests
 
 Initial browser demo can be manually tested.
@@ -143,6 +152,14 @@ python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=80
 ```
 
 Real model download should not be mandatory in first CI unless explicitly planned.
+
+The current CI intentionally installs only:
+
+```bash
+python -m pip install -e ".[dev]"
+```
+
+YOLO-specific behavior is covered by tests with fake model objects. This keeps CI fast and avoids network/model-download dependency.
 
 ## Test data
 

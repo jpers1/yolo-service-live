@@ -81,9 +81,9 @@ No Redis or queue is required for v0 because inference is synchronous and CPU-on
 
 ## Model lifecycle
 
-Initial implementation may use a fake detector for API tests.
+Initial implementation uses a fake detector for normal API tests.
 
-Real inference is introduced later by loading `yolo11n.pt` through Ultralytics. Model loading may happen lazily on first inference or during readiness startup; the final decision should be documented once implemented.
+Real inference is available through a configurable YOLO detector backend. The YOLO backend loads `yolo11n.pt` through Ultralytics lazily on first inference and runs with `device="cpu"`. Normal CI does not install Ultralytics or download model weights.
 
 ## OpenAI-compatible adapter
 
@@ -101,10 +101,10 @@ The OpenAI-compatible adapter should:
 Current implementation path:
 
 ```text
-chat endpoint -> image decoder -> detector interface -> fake detector
+chat endpoint -> image decoder -> detector interface -> fake detector or YOLO detector
 ```
 
-The detector is stored on FastAPI app state so tests and future runtime wiring can inject a different implementation. Real YOLO inference remains planned but is not implemented yet.
+The detector is stored on FastAPI app state so tests and runtime wiring can inject a different implementation. The default runtime backend is configurable through `YOLO_SERVICE_DETECTOR_BACKEND`.
 
 ## Native vision endpoint
 

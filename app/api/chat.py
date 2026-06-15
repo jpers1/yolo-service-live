@@ -13,7 +13,11 @@ from app.schemas.openai import (
     ChatCompletionsRequest,
     ChatContentPart,
 )
-from app.vision.detector import get_app_detector
+from app.vision.detector import (
+    DetectorInferenceError,
+    DetectorUnavailableError,
+    get_app_detector,
+)
 from app.vision.image_decode import ImageDecodeError, decode_image_data_url
 
 router = APIRouter(prefix="/v1", dependencies=[Depends(require_api_key)])
@@ -79,10 +83,25 @@ async def create_chat_completion(
         ) from exc
 
     detector = get_app_detector(http_request)
-    detection_payload = detector.detect(
-        model=settings.public_model_name,
-        image=decoded_image,
-    )
+    try:
+        detection_payload = detector.detect(
+            model=settings.public_model_name,
+            image=decoded_image,
+        )
+    except DetectorUnavailableError as exc:
+        raise openai_error(
+            status_code=503,
+            message="Detector backend is not available.",
+            error_type="server_error",
+            code="detector_not_available",
+        ) from exc
+    except DetectorInferenceError as exc:
+        raise openai_error(
+            status_code=500,
+            message="Detector inference failed.",
+            error_type="server_error",
+            code="inference_failed",
+        ) from exc
     assistant_content = json.dumps(detection_payload.model_dump(), separators=(",", ":"))
 
     return ChatCompletionResponse(

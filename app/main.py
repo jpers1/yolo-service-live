@@ -5,13 +5,12 @@ from app.api.health import router as health_router
 from app.api.models import router as models_router
 from app.config import Settings, get_settings
 from app.errors import OpenAIError, openai_error_handler
-from app.vision.detector import Detector
-from app.vision.fake_detector import FakeDetector
+from app.vision.detector import Detector, build_detector
 
 
 def create_app(settings: Settings | None = None, detector: Detector | None = None) -> FastAPI:
     resolved_settings = settings or get_settings()
-    resolved_detector = detector or FakeDetector()
+    resolved_detector = detector or build_detector(resolved_settings)
 
     app = FastAPI(
         title=resolved_settings.service_name,

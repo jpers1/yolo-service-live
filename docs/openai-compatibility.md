@@ -34,7 +34,7 @@ Planned for MVP:
 - OpenAI-shaped response envelope
 - OpenAI-like error object
 
-Current implementation note: `POST /v1/chat/completions` is implemented with a mocked detector response. The endpoint validates the model, rejects `stream: true`, requires exactly one `image_url` content part, decodes base64 JPEG/PNG data URLs, and returns assistant `content` as a JSON string. It does not run YOLO yet.
+Current implementation note: `POST /v1/chat/completions` validates the model, rejects `stream: true`, requires exactly one `image_url` content part, decodes base64 JPEG/PNG data URLs, and returns assistant `content` as a JSON string. The endpoint calls the configured detector backend. The fake backend is used for normal tests, and the YOLO backend can run real CPU inference when the optional YOLO extra and weights are available.
 
 ## Not supported in MVP
 

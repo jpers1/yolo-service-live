@@ -1,15 +1,19 @@
+from PIL import Image
+
 from app.schemas.detections import DetectionPayload
 from app.vision.fake_detector import FakeDetector
 from app.vision.image_decode import DecodedImage
 
 
 def test_fake_detector_returns_mock_payload_for_decoded_image() -> None:
+    pil_image = Image.new("RGB", (2, 3))
     image = DecodedImage(
         mime_type="image/jpeg",
-        width=2,
-        height=3,
-        mode="RGB",
+        width=pil_image.width,
+        height=pil_image.height,
+        mode=pil_image.mode,
         format="JPEG",
+        image=pil_image,
     )
 
     payload = FakeDetector().detect(image=image, model="configured-model")

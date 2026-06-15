@@ -1,6 +1,6 @@
 import base64
 import binascii
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from io import BytesIO
 
 from PIL import Image, UnidentifiedImageError
@@ -17,6 +17,7 @@ class DecodedImage:
     height: int
     mode: str
     format: str | None
+    image: Image.Image = field(repr=False, compare=False)
 
 
 class ImageDecodeError(ValueError):
@@ -80,6 +81,7 @@ def decode_image_data_url(
 
             mode = image.mode
             image.load()
+            image_copy = image.convert("RGB").copy()
     except ImageDecodeError:
         raise
     except (UnidentifiedImageError, OSError, ValueError) as exc:
@@ -91,6 +93,7 @@ def decode_image_data_url(
         height=height,
         mode=mode,
         format=image_format,
+        image=image_copy,
     )
 
 
