@@ -39,7 +39,7 @@ docs/decisions/
 
 ## Current implementation state
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding and a mocked detector response, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding, a detector abstraction backed by a fake detector object, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Implemented in PR #2:
 
@@ -62,6 +62,7 @@ Implemented after the skeleton:
 - `app/api/chat.py`
 - `app/schemas/openai.py`
 - `app/schemas/detections.py`
+- `app/vision/detector.py`
 - `app/vision/fake_detector.py`
 - `app/vision/image_decode.py`
 - `.github/workflows/ci.yml`
@@ -77,9 +78,13 @@ Implemented after the skeleton:
 - protected `POST /v1/chat/completions`
 - OpenAI-like chat request/response schemas
 - mocked detector response marked with `"mock": true`
+- detector abstraction for decoded images
+- fake detector object stored on `app.state.detector`
+- chat-completions endpoint calls the detector interface
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
 - MIME allowlist validation
+- declared MIME versus decoded image format validation
 - payload and pixel limit enforcement
 - decoded image metadata in the mocked chat response source
 - full local verification script running pytest, Ruff, and diff whitespace checks
@@ -94,11 +99,11 @@ Implemented after the skeleton:
 - focused image decoding tests
 - focused model-list tests
 
-No real detector logic or YOLO inference exists yet.
+No real YOLO inference exists yet.
 
 ## Next step
 
-Add a detector abstraction for decoded images with fake-detector integration. Keep real YOLO inference separate unless a future work order explicitly combines planning or integration.
+Add real YOLO11n CPU detector integration. Keep native `/v1/vision/detections` separate unless a future work order explicitly combines it.
 
 ## Warning for future agents
 

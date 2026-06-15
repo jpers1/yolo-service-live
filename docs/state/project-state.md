@@ -4,7 +4,7 @@ Last updated: 2026-06-15
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding and a mocked detector response, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding, a detector abstraction backed by a fake detector object, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -20,10 +20,12 @@ Merged PR #7 added the full local verification script, coverage baseline, and Gi
 
 Merged PR #8 added the protected `POST /v1/chat/completions` contract with a mocked detector response.
 
+Merged PR #9 added safe base64 JPEG/PNG decoding, payload and pixel limits, and declared-MIME versus decoded-format validation.
+
 Current baseline merge commit:
 
 ```text
-0363f296fa60d1f4b6f479982e303841a89e69ca
+b1d64ffa8307de09c9cdcd4cccc69ebbc2d024bc
 ```
 
 ## Product goal
@@ -44,7 +46,7 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 4: Safe image input decoding.
+Phase 5: Detector abstraction.
 
 ## Implemented
 
@@ -80,6 +82,7 @@ Phase 4: Safe image input decoding.
 - `app/schemas/detections.py`
 - `app/schemas/openai.py`
 - `app/vision/__init__.py`
+- `app/vision/detector.py`
 - `app/vision/fake_detector.py`
 - `app/vision/image_decode.py`
 - `tests/__init__.py`
@@ -105,9 +108,13 @@ Phase 4: Safe image input decoding.
 - protected `POST /v1/chat/completions`
 - OpenAI-like chat request and response schemas
 - mocked detector response marked with `"mock": true`
+- detector abstraction for decoded images
+- fake detector object used by the chat-completions endpoint
+- detector stored on `app.state.detector`
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
 - image MIME allowlist validation
+- declared MIME versus decoded image format validation
 - encoded image payload limit
 - decoded image pixel limit
 - decoded image metadata in mocked chat response source
@@ -116,6 +123,7 @@ Phase 4: Safe image input decoding.
 - focused chat-completions contract tests
 - focused config tests
 - focused detection schema tests
+- focused detector abstraction tests
 - focused error helper tests
 - focused health/readiness endpoint tests
 - focused image decoding tests
@@ -127,7 +135,6 @@ Phase 4: Safe image input decoding.
 
 ## Not implemented yet
 
-- Detector abstraction connected to decoded images.
 - Real YOLO inference.
 - Native detection endpoint.
 - Docker.
@@ -148,16 +155,16 @@ Phase 4: Safe image input decoding.
 
 ## Next recommended task
 
-Add detector abstraction for decoded images with fake-detector integration.
+Add real YOLO11n CPU detector integration.
 
 Suggested branch:
 
 ```text
-feature/009-detector-abstraction
+feature/011-yolo11n-cpu-detector
 ```
 
 Suggested commit message:
 
 ```text
-Add detector abstraction for decoded images
+Add YOLO11n CPU detector integration
 ```

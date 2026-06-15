@@ -8,6 +8,28 @@ from PIL import Image
 
 from app.config import Settings
 from app.main import create_app
+from app.schemas.detections import DetectionPayload, DetectionSource
+from app.vision.image_decode import DecodedImage
+
+
+class RecordingDetector:
+    def __init__(self) -> None:
+        self.calls: list[tuple[DecodedImage, str]] = []
+
+    def detect(self, *, image: DecodedImage, model: str) -> DetectionPayload:
+        self.calls.append((image, model))
+        return DetectionPayload(
+            model=model,
+            source=DetectionSource(
+                kind="image_url",
+                decoded=True,
+                mime_type=image.mime_type,
+                width=image.width,
+                height=image.height,
+            ),
+            detections=[],
+            mock=True,
+        )
 
 
 def _client(
@@ -142,6 +164,42 @@ def test_assistant_message_content_is_valid_mock_detection_json() -> None:
         "box_xyxy": [0.0, 0.0, 1.0, 1.0],
         "box_normalized_xyxy": [0.0, 0.0, 1.0, 1.0],
     }
+
+
+def test_chat_completions_uses_injected_detector() -> None:
+    detector = RecordingDetector()
+    client = TestClient(
+        create_app(
+            Settings(api_key="test-key", public_model_name="configured-model", _env_file=None),
+            detector=detector,
+        )
+    )
+
+    response = client.post(
+        "/v1/chat/completions",
+        json=_valid_request(model="configured-model", image_url=_image_data_url(size=(5, 7))),
+        headers=_auth_headers(),
+    )
+
+    assert response.status_code == 200
+    assert len(detector.calls) == 1
+    image, model = detector.calls[0]
+    assert model == "configured-model"
+    assert image.mime_type == "image/jpeg"
+    assert image.width == 5
+    assert image.height == 7
+
+    content = json.loads(response.json()["choices"][0]["message"]["content"])
+    assert content["model"] == "configured-model"
+    assert content["source"] == {
+        "kind": "image_url",
+        "decoded": True,
+        "mime_type": "image/jpeg",
+        "width": 5,
+        "height": 7,
+    }
+    assert content["detections"] == []
+    assert content["mock"] is True
 
 
 def test_unsupported_model_returns_openai_like_error() -> None:
