@@ -90,21 +90,37 @@ docs/decisions/*.md
 
 Update the relevant docs when behavior changes. Do not leave docs claiming behavior that code does not implement.
 
-## Execution-agent capability assumption
+## Work-unit sizing for GPT-5.5 execution
 
-The default execution coding agent is expected to be a small/medium model, currently planned as GPT-5.4-mini. Therefore tasks must be narrow and explicit.
+The current execution coding model is GPT-5.5. Work orders may be larger than earlier micro-PRs, but must still remain bounded and reviewable.
 
-One PR should normally implement one behavior.
+Preferred GPT-5.5 PR size:
 
-Preferred PR size:
+- one coherent subsystem slice per PR;
+- usually 4-12 changed files;
+- usually 200-800 lines of new or changed implementation/test/docs content;
+- focused tests plus adjacent integration tests when appropriate;
+- documentation updates included only when directly tied to the implemented behavior.
 
-- 1-5 files changed
-- 50-250 lines of application code
-- focused tests only
-- no architectural invention
-- no broad refactors unless explicitly requested
+Good GPT-5.5 PR examples:
 
-Do not combine API contract, image decoding, YOLO inference, browser UI, Docker, and documentation in one PR.
+- configuration loading plus `/healthz` and `/readyz`;
+- Bearer auth plus `/v1/models`;
+- OpenAI chat-completions schemas plus mocked detector response;
+- safe base64 image decoding plus validation tests;
+- detector abstraction plus fake detector integration;
+- real YOLO11n CPU integration plus manual smoke script;
+- native `/v1/vision/detections` endpoint plus tests;
+- Dockerfile plus deployment documentation;
+- browser demo first working version.
+
+Bad GPT-5.5 PR examples:
+
+- build the whole API and browser UI in one PR;
+- add YOLO, image decoding, OpenAI compatibility, Docker, and browser demo together;
+- introduce database, Redis, users, billing, or queues without a strategic work order;
+- mix unrelated refactors with feature work;
+- change project architecture without explicit approval.
 
 ## Required workflow
 
@@ -124,6 +140,32 @@ For implementation tasks:
 12. Report exact evidence.
 
 If live repository state differs from the prompt or docs, report the mismatch before making broad changes.
+
+## Strategic review gate
+
+All implementation, documentation, configuration, test, CI, deployment, and release PRs must pass through the OAP strategic review gate before merge.
+
+The execution agent must:
+
+- create a feature branch from current `main`;
+- keep the task narrow and within the work order;
+- commit only related files;
+- open a PR, preferably as a draft PR when supported;
+- never merge its own PR;
+- never enable auto-merge;
+- never approve its own PR;
+- never mark the work as release-ready by itself;
+- produce the required final report with branch, commit, PR URL, changed files, tests/checks run, exclusions, risks, and follow-up.
+
+After the execution agent reports, the human will copy the report to the strategic AI reviewer.
+
+The strategic AI reviewer will inspect the PR, diff, scope, tests, documentation impact, and risk. The reviewer will respond with one of:
+
+- `APPROVE`: the PR is acceptable for the human to merge.
+- `REQUEST REPAIR`: the PR needs a bounded repair work order before merge.
+- `REJECT`: the PR is wrong-shaped, unsafe, or outside scope.
+
+The human remains the final merge and release authority. No coding agent may merge, enable auto-merge, approve its own PR, or treat passing local tests as sufficient for merge.
 
 ## Forbidden actions
 
@@ -258,6 +300,21 @@ docs/state/rc1-readiness.md
 ```
 
 Do not overclaim. Use terms such as "planned", "implemented", "tested", "manual-only", "post-RC1" precisely.
+
+## Final report cleanliness
+
+Final reports must contain only the requested final report.
+
+Do not include:
+
+- `/skills` output;
+- available-skill listings;
+- unrelated tool help;
+- copied prompt text;
+- duplicated transcript fragments;
+- speculative next-task suggestions not requested by the work order.
+
+If extra diagnostic information is useful, place it under `Risks or follow-up`.
 
 ## Final report format
 

@@ -8,10 +8,12 @@ The repository now has an importable FastAPI skeleton on `main`.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
+Merged PR #3 synchronized durable state docs with the FastAPI skeleton baseline.
+
 Current baseline merge commit:
 
 ```text
-ba88f8f9f434873afe41540bc3899c07a902cb2b
+0bf1360b0198250b742c7a06445bb19deaa45b40
 ```
 
 ## Product goal
@@ -86,7 +88,8 @@ Phase 1: FastAPI shell.
 - No arbitrary external image URL fetching in MVP.
 - No image persistence.
 - Browser demo later.
-- Micro-PRs suitable for GPT-5.4-mini execution agent.
+- GPT-5.5 work units must remain bounded, reviewable, and evidence-backed.
+- Every PR must pass through strategic AI review before human merge.
 
 ## Next recommended task
 
