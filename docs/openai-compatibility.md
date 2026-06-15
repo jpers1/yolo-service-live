@@ -34,6 +34,8 @@ Planned for MVP:
 - OpenAI-shaped response envelope
 - OpenAI-like error object
 
+Current implementation note: `POST /v1/chat/completions` is implemented with a mocked detector response. The endpoint validates the model, rejects `stream: true`, requires exactly one `image_url` content part, and returns assistant `content` as a JSON string. It does not decode base64 image bytes or run YOLO yet.
+
 ## Not supported in MVP
 
 - general text chat;

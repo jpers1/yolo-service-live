@@ -4,7 +4,7 @@ Last updated: 2026-06-15
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with a mocked detector response, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -16,10 +16,12 @@ Merged PR #5 added typed configuration loading and public health/readiness endpo
 
 Merged PR #6 added Bearer authentication, OpenAI-like auth/config errors, and protected `GET /v1/models`.
 
+Merged PR #7 added the full local verification script, coverage baseline, and GitHub Actions CI.
+
 Current baseline merge commit:
 
 ```text
-d5b38c8f4badb71968ee89ed836c7baaf6d21423
+05748bb08a8a349adb71c06e998859c780b9665d
 ```
 
 ## Product goal
@@ -40,7 +42,7 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 2: Auth and model listing.
+Phase 3: Chat contract with mocked detector response.
 
 ## Implemented
 
@@ -65,16 +67,24 @@ Phase 2: Auth and model listing.
 - `scripts/check.sh`
 - `app/__init__.py`
 - `app/api/__init__.py`
+- `app/api/chat.py`
 - `app/api/health.py`
 - `app/api/models.py`
 - `app/auth.py`
 - `app/config.py`
 - `app/errors.py`
 - `app/main.py`
+- `app/schemas/__init__.py`
+- `app/schemas/detections.py`
+- `app/schemas/openai.py`
+- `app/vision/__init__.py`
+- `app/vision/fake_detector.py`
 - `tests/__init__.py`
 - `tests/test_auth.py`
 - `tests/test_app_factory.py`
+- `tests/test_chat_completions.py`
 - `tests/test_config.py`
+- `tests/test_detection_schema.py`
 - `tests/test_errors.py`
 - `tests/test_health.py`
 - `tests/test_models.py`
@@ -88,9 +98,15 @@ Phase 2: Auth and model listing.
 - fail-closed behavior when server API key is missing
 - minimal OpenAI-like error helper for auth/config failures
 - protected `GET /v1/models`
+- protected `POST /v1/chat/completions`
+- OpenAI-like chat request and response schemas
+- mocked detector response marked with `"mock": true`
+- image URL content part detection without image decoding
 - focused app-factory test
 - focused auth tests
+- focused chat-completions contract tests
 - focused config tests
+- focused detection schema tests
 - focused error helper tests
 - focused health/readiness endpoint tests
 - focused model-list tests
@@ -101,9 +117,8 @@ Phase 2: Auth and model listing.
 
 ## Not implemented yet
 
-- `/v1/chat/completions`.
-- Image decoding.
-- Detector abstraction.
+- Real image decoding.
+- Detector abstraction connected to decoded images.
 - Real YOLO inference.
 - Native detection endpoint.
 - Docker.
@@ -124,16 +139,16 @@ Phase 2: Auth and model listing.
 
 ## Next recommended task
 
-Add OpenAI chat-completions schemas plus mocked detector response.
+Add safe base64 image decoding and validation.
 
 Suggested branch:
 
 ```text
-feature/006-chat-schemas-mocked-detector
+feature/008-base64-image-decoding
 ```
 
 Suggested commit message:
 
 ```text
-Add chat schemas with mocked detector response
+Add safe base64 image decoding
 ```

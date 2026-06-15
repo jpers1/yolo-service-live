@@ -4,7 +4,7 @@ Status: not started.
 
 ## Summary
 
-RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, and CI-backed test coverage, but no chat-completions behavior or detector integration yet.
+RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, mocked `POST /v1/chat/completions`, and CI-backed test coverage, but no image decoding or real detector integration yet.
 
 ## Readiness matrix
 
@@ -21,9 +21,9 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | `/readyz` | Implemented | `app/api/health.py`, `tests/test_health.py` | Public config readiness endpoint; does not load YOLO |
 | `/v1/models` | Implemented | `app/api/models.py`, `tests/test_models.py` | Protected OpenAI-like model list |
 | Testing baseline | Implemented | `scripts/check.sh`, `pyproject.toml`, `tests/` | Full local suite plus 80% app coverage threshold |
-| `/v1/chat/completions` | Missing | None | Not implemented |
+| `/v1/chat/completions` | Mocked | `app/api/chat.py`, `tests/test_chat_completions.py` | Contract implemented with mocked detector response; no image decoding |
 | Image decoding | Missing | None | Not implemented |
-| Fake detector tests | Missing | None | Not implemented |
+| Fake detector tests | Implemented | `app/vision/fake_detector.py`, `tests/test_detection_schema.py` | Placeholder detector for chat contract only |
 | Real YOLO11n CPU inference | Missing | None | Not implemented |
 | Native detection endpoint | Missing | None | Not implemented |
 | Docker | Missing | None | Not implemented |
@@ -37,7 +37,6 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 
 ## RC1 blockers
 
-- No `/v1/chat/completions` behavior implemented yet.
 - No image decoding implemented yet.
 - No detector abstraction implemented yet.
 - No real YOLO inference implemented yet.

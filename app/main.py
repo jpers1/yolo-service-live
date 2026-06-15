@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.api.chat import router as chat_router
 from app.api.health import router as health_router
 from app.api.models import router as models_router
 from app.config import Settings, get_settings
@@ -17,6 +18,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.settings = resolved_settings
     app.add_exception_handler(OpenAIError, openai_error_handler)
     app.include_router(health_router)
+    app.include_router(chat_router)
     app.include_router(models_router)
     return app
 

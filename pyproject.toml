@@ -23,8 +23,9 @@ dev = [
   "ruff>=0.6,<1.0",
 ]
 
-[tool.setuptools]
-packages = ["app", "app.api"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

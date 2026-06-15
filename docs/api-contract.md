@@ -129,6 +129,8 @@ Requires auth.
 - Text prompt content may be accepted but should not alter detection behavior in MVP.
 - Unknown fields may be ignored if this is documented and tested.
 
+Current implementation note: the endpoint detects the presence of exactly one `image_url` content part but does not decode, fetch, or validate image bytes yet. It returns a mocked detection payload marked with `"mock": true`.
+
 ### Planned response
 
 The response should use an OpenAI-shaped chat-completion envelope.
@@ -146,7 +148,7 @@ The assistant `content` is a JSON string, not prose.
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "{\"task\":\"object_detection\",\"model\":\"yolo11n-coco\",\"detections\":[]}"
+        "content": "{\"task\":\"object_detection\",\"model\":\"yolo11n-coco\",\"mock\":true,\"detections\":[]}"
       },
       "finish_reason": "stop"
     }
@@ -229,7 +231,8 @@ Common error codes:
 | 401 | authentication_error | invalid_api_key | Wrong Bearer token |
 | 400 | invalid_request_error | unsupported_model | Model is not supported |
 | 400 | invalid_request_error | missing_image | No image content part found |
-| 400 | invalid_request_error | multiple_images_unsupported | More than one image provided when unsupported |
+| 400 | invalid_request_error | multiple_images_not_supported | More than one image provided when unsupported |
+| 400 | invalid_request_error | streaming_not_supported | Streaming is not supported |
 | 400 | invalid_request_error | invalid_image_data | Base64/image decoding failed |
 | 400 | invalid_request_error | unsupported_image_mime | MIME type is not allowed |
 | 413 | invalid_request_error | payload_too_large | Request or image too large |
