@@ -66,6 +66,10 @@ def decode_image_data_url(
 
     try:
         with Image.open(BytesIO(decoded)) as image:
+            image_format = image.format
+            if not _format_matches_mime(mime_type=mime_type, image_format=image_format):
+                raise _invalid_image_data("Image bytes do not match declared MIME type.")
+
             width, height = image.size
             if width * height > max_image_pixels:
                 raise ImageDecodeError(
@@ -75,7 +79,6 @@ def decode_image_data_url(
                 )
 
             mode = image.mode
-            image_format = image.format
             image.load()
     except ImageDecodeError:
         raise
@@ -107,6 +110,14 @@ def _parse_data_url_header(header: str) -> str:
         )
 
     return mime_type
+
+
+def _format_matches_mime(*, mime_type: str, image_format: str | None) -> bool:
+    expected_formats = {
+        "image/jpeg": "JPEG",
+        "image/png": "PNG",
+    }
+    return expected_formats.get(mime_type) == image_format
 
 
 def _invalid_image_data(message: str) -> ImageDecodeError:

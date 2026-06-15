@@ -125,6 +125,7 @@ Requires auth.
   - `data:image/jpeg;base64,...`
   - `data:image/png;base64,...`
 - JPEG and PNG data URLs are base64-decoded and validated before returning success.
+- The decoded image format must match the declared data URL MIME type.
 - Encoded payload size and decoded image pixel limits are enforced from service settings.
 - Arbitrary external `http://` or `https://` image URLs are rejected in MVP.
 - `stream: true` is not supported in MVP unless a later PR implements it.

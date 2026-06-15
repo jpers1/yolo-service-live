@@ -260,6 +260,21 @@ def test_invalid_base64_returns_openai_like_error() -> None:
     assert "not-valid" not in response.text
 
 
+def test_mime_format_mismatch_returns_openai_like_error_without_payload() -> None:
+    image_url = _image_data_url(mime_type="image/png", image_format="JPEG")
+    encoded_payload = image_url.partition(",")[2]
+
+    response = _client().post(
+        "/v1/chat/completions",
+        json=_valid_request(image_url=image_url),
+        headers=_auth_headers(),
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"]["code"] == "invalid_image_data"
+    assert encoded_payload not in response.text
+
+
 def test_oversized_image_returns_openai_like_error() -> None:
     response = _client(max_image_pixels=5).post(
         "/v1/chat/completions",

@@ -73,7 +73,7 @@ data:image/jpeg;base64,...
 data:image/png;base64,...
 ```
 
-The service validates image input by requiring base64 data URLs, using a JPEG/PNG MIME allowlist, decoding base64 with strict validation, opening the image with Pillow, and enforcing configured payload and pixel limits.
+The service validates image input by requiring base64 data URLs, using a JPEG/PNG MIME allowlist, decoding base64 with strict validation, opening the image with Pillow, verifying the decoded image format matches the declared MIME type, and enforcing configured payload and pixel limits.
 
 MVP rejected input:
 

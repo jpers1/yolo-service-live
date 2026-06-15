@@ -51,6 +51,23 @@ def test_image_jpg_alias_normalizes_to_jpeg() -> None:
     image = _decode(_image_data_url(mime_type="image/jpg", image_format="JPEG"))
 
     assert image.mime_type == "image/jpeg"
+    assert image.format == "JPEG"
+
+
+def test_declared_png_with_jpeg_bytes_is_rejected() -> None:
+    with pytest.raises(ImageDecodeError) as exc_info:
+        _decode(_image_data_url(mime_type="image/png", image_format="JPEG"))
+
+    assert exc_info.value.code == "invalid_image_data"
+    assert exc_info.value.message == "Image bytes do not match declared MIME type."
+
+
+def test_declared_jpeg_with_png_bytes_is_rejected() -> None:
+    with pytest.raises(ImageDecodeError) as exc_info:
+        _decode(_image_data_url(mime_type="image/jpeg", image_format="PNG"))
+
+    assert exc_info.value.code == "invalid_image_data"
+    assert exc_info.value.message == "Image bytes do not match declared MIME type."
 
 
 @pytest.mark.parametrize("url", ["https://example.test/image.jpg", "http://example.test/image.jpg"])
