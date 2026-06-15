@@ -4,7 +4,7 @@ Last updated: 2026-06-15
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding, a detector abstraction backed by a fake detector object, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -22,10 +22,12 @@ Merged PR #8 added the protected `POST /v1/chat/completions` contract with a moc
 
 Merged PR #9 added safe base64 JPEG/PNG decoding, payload and pixel limits, and declared-MIME versus decoded-format validation.
 
+Merged PR #10 added the detector abstraction and wired chat-completions through an app-state fake detector object.
+
 Current baseline merge commit:
 
 ```text
-b1d64ffa8307de09c9cdcd4cccc69ebbc2d024bc
+0dde18d191c54fd9084191c8e9b4c1c08b68ac58
 ```
 
 ## Product goal
@@ -46,7 +48,7 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 5: Detector abstraction.
+Phase 6: Real YOLO.
 
 ## Implemented
 
@@ -85,6 +87,7 @@ Phase 5: Detector abstraction.
 - `app/vision/detector.py`
 - `app/vision/fake_detector.py`
 - `app/vision/image_decode.py`
+- `app/vision/yolo_detector.py`
 - `tests/__init__.py`
 - `tests/test_auth.py`
 - `tests/test_app_factory.py`
@@ -95,6 +98,8 @@ Phase 5: Detector abstraction.
 - `tests/test_health.py`
 - `tests/test_image_decode.py`
 - `tests/test_models.py`
+- `tests/test_yolo_detector.py`
+- `scripts/smoke_yolo.py`
 - minimal FastAPI app factory
 - module-level `app`
 - typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
@@ -111,6 +116,11 @@ Phase 5: Detector abstraction.
 - detector abstraction for decoded images
 - fake detector object used by the chat-completions endpoint
 - detector stored on `app.state.detector`
+- configurable detector backend with `fake` and `yolo` modes
+- real YOLO11n CPU detector backend loaded lazily on first inference
+- YOLO backend uses configured model weights and confidence threshold
+- YOLO backend returns `mock: false`
+- manual real-model smoke script
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
 - image MIME allowlist validation
@@ -132,10 +142,10 @@ Phase 5: Detector abstraction.
 - pytest coverage baseline for `app` with 80% threshold
 - GitHub Actions CI for lint and coverage test suite
 - foundational runtime and test dependencies plus Pillow for safe image decoding
+- optional `yolo` extra for Ultralytics
 
 ## Not implemented yet
 
-- Real YOLO inference.
 - Native detection endpoint.
 - Docker.
 - Browser demo.
@@ -155,16 +165,16 @@ Phase 5: Detector abstraction.
 
 ## Next recommended task
 
-Add real YOLO11n CPU detector integration.
+Add native `/v1/vision/detections` endpoint using the existing image decoder and detector abstraction.
 
 Suggested branch:
 
 ```text
-feature/011-yolo11n-cpu-detector
+feature/012-native-vision-detections
 ```
 
 Suggested commit message:
 
 ```text
-Add YOLO11n CPU detector integration
+Add native vision detections endpoint
 ```

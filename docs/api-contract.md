@@ -132,7 +132,7 @@ Requires auth.
 - Text prompt content may be accepted but should not alter detection behavior in MVP.
 - Unknown fields may be ignored if this is documented and tested.
 
-Current implementation note: the endpoint requires exactly one `image_url` content part, decodes and validates base64 JPEG/PNG data URLs, and rejects external URLs. It still returns a mocked detection payload marked with `"mock": true`; real YOLO inference is not implemented yet.
+Current implementation note: the endpoint requires exactly one `image_url` content part, decodes and validates base64 JPEG/PNG data URLs, and rejects external URLs. It calls the configured detector backend. The fake backend returns `"mock": true`; the YOLO backend returns real detections with `"mock": false`.
 
 ### Planned response
 
@@ -243,6 +243,7 @@ Common error codes:
 | 413 | invalid_request_error | image_too_large | Decoded image dimensions are too large |
 | 422 | invalid_request_error | invalid_schema | JSON does not match supported schema |
 | 429 | rate_limit_error | service_busy | CPU worker busy or concurrency limit reached |
+| 503 | server_error | detector_not_available | Detector backend is unavailable or missing dependencies |
 | 500 | server_error | inference_failed | Unexpected inference failure |
 
 ## Contract stability

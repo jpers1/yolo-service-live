@@ -1,6 +1,6 @@
 # Model Card: yolo11n-coco
 
-Status: initial design.
+Status: active baseline.
 
 ## Model identity
 
@@ -32,13 +32,22 @@ Object detection.
 
 ## Dataset/classes
 
-The planned default model is a COCO-pretrained YOLO11 detection model with 80 pretrained COCO classes.
+The default model is a COCO-pretrained YOLO11 detection model with 80 pretrained COCO classes when the YOLO backend is enabled.
 
 ## Why YOLO11n?
 
 `yolo11n.pt` is the smallest YOLO11 detection model variant documented by Ultralytics. It is the best default for CPU-only service development.
 
 ## Runtime
+
+The service has a configurable real YOLO11n CPU detector backend. It loads `yolo11n.pt` lazily through Ultralytics on first inference and runs with CPU device selection.
+
+Normal CI does not install Ultralytics or download model weights. Use the manual smoke script for real-model verification.
+
+```bash
+python -m pip install -e ".[yolo]"
+python scripts/smoke_yolo.py
+```
 
 The service must run on CPU without CUDA or GPU assumptions.
 

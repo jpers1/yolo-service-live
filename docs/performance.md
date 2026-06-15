@@ -25,6 +25,24 @@ CPU inference should not be advertised as:
 
 Use `yolo11n.pt` as the default model because it is the smallest YOLO11 detection variant.
 
+## Real YOLO CPU inference
+
+The service can use a real YOLO11n CPU detector backend when configured with:
+
+```text
+YOLO_SERVICE_DETECTOR_BACKEND=yolo
+YOLO_SERVICE_MODEL_WEIGHTS=yolo11n.pt
+```
+
+The first real inference may download model weights through Ultralytics if the weights are not already present. CPU inference may be slow depending on host CPU, image dimensions, PyTorch build, and concurrent load.
+
+Normal CI does not run real model inference and does not install the optional YOLO extra. Real-model verification is manual:
+
+```bash
+python -m pip install -e ".[yolo]"
+python scripts/smoke_yolo.py
+```
+
 ## Browser demo target
 
 Initial browser live mode should target:

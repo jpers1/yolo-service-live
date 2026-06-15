@@ -39,7 +39,7 @@ docs/decisions/
 
 ## Current implementation state
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding, a detector abstraction backed by a fake detector object, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding, a detector abstraction with fake and YOLO backends, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Implemented in PR #2:
 
@@ -65,8 +65,10 @@ Implemented after the skeleton:
 - `app/vision/detector.py`
 - `app/vision/fake_detector.py`
 - `app/vision/image_decode.py`
+- `app/vision/yolo_detector.py`
 - `.github/workflows/ci.yml`
 - `scripts/check.sh`
+- `scripts/smoke_yolo.py`
 - typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
 - settings stored on `app.state.settings`
 - public `/healthz`
@@ -81,6 +83,10 @@ Implemented after the skeleton:
 - detector abstraction for decoded images
 - fake detector object stored on `app.state.detector`
 - chat-completions endpoint calls the detector interface
+- real YOLO11n CPU detector backend available through `YOLO_SERVICE_DETECTOR_BACKEND=yolo`
+- YOLO detector loads Ultralytics lazily on first detection
+- optional `yolo` dependency extra for manual/runtime real inference
+- manual real-model smoke script
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
 - MIME allowlist validation
@@ -99,11 +105,11 @@ Implemented after the skeleton:
 - focused image decoding tests
 - focused model-list tests
 
-No real YOLO inference exists yet.
+Normal CI avoids real YOLO downloads by using fake detectors and fake YOLO model objects.
 
 ## Next step
 
-Add real YOLO11n CPU detector integration. Keep native `/v1/vision/detections` separate unless a future work order explicitly combines it.
+Add native `/v1/vision/detections` using the existing image decoder and detector abstraction.
 
 ## Warning for future agents
 

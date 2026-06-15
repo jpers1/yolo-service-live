@@ -10,6 +10,7 @@ def test_default_settings_load() -> None:
     assert settings.service_name == "YOLO OpenAI Vision API"
     assert settings.service_version == "0.1.0"
     assert settings.environment == "development"
+    assert settings.detector_backend == "yolo"
     assert settings.public_model_name == "yolo11n-coco"
     assert settings.model_weights == "yolo11n.pt"
     assert settings.default_confidence == 0.25
@@ -30,6 +31,18 @@ def test_environment_override(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_invalid_confidence_raises_validation_error() -> None:
     with pytest.raises(ValidationError):
         Settings(default_confidence=1.1, _env_file=None)
+
+
+@pytest.mark.parametrize("detector_backend", ["fake", "yolo"])
+def test_valid_detector_backend_values(detector_backend: str) -> None:
+    settings = Settings(detector_backend=detector_backend, _env_file=None)
+
+    assert settings.detector_backend == detector_backend
+
+
+def test_invalid_detector_backend_raises_validation_error() -> None:
+    with pytest.raises(ValidationError):
+        Settings(detector_backend="unsupported", _env_file=None)
 
 
 def test_api_key_is_secret() -> None:

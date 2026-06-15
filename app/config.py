@@ -19,6 +19,7 @@ class Settings(BaseSettings):
 
     api_key: SecretStr | None = None
 
+    detector_backend: Literal["fake", "yolo"] = "yolo"
     public_model_name: str = "yolo11n-coco"
     model_weights: str = "yolo11n.pt"
     default_confidence: float = Field(default=0.25, ge=0.0, le=1.0)
