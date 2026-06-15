@@ -4,7 +4,7 @@ Status: not started.
 
 ## Summary
 
-RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, and public health/readiness endpoints, but no authenticated `/v1/*` API behavior or detector integration yet.
+RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, and `GET /v1/models`, but no chat-completions behavior or detector integration yet.
 
 ## Readiness matrix
 
@@ -16,10 +16,10 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | Security docs | Planned | `docs/security.md` | Initial version generated |
 | FastAPI service | Implemented | `app/main.py` | App factory includes settings and health router |
 | Config loading | Implemented | `app/config.py`, `tests/test_config.py` | Typed settings with `YOLO_SERVICE_` env prefix |
-| Bearer auth | Missing | None | Not implemented |
+| Bearer auth | Implemented | `app/auth.py`, `tests/test_auth.py` | Static Bearer key for protected `/v1` endpoints |
 | `/healthz` | Implemented | `app/api/health.py`, `tests/test_health.py` | Public liveness endpoint |
 | `/readyz` | Implemented | `app/api/health.py`, `tests/test_health.py` | Public config readiness endpoint; does not load YOLO |
-| `/v1/models` | Missing | None | Not implemented |
+| `/v1/models` | Implemented | `app/api/models.py`, `tests/test_models.py` | Protected OpenAI-like model list |
 | `/v1/chat/completions` | Missing | None | Not implemented |
 | Image decoding | Missing | None | Not implemented |
 | Fake detector tests | Missing | None | Not implemented |
@@ -36,8 +36,7 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 
 ## RC1 blockers
 
-- No Bearer auth implemented yet.
-- No `/v1/*` API behavior implemented yet.
+- No `/v1/chat/completions` behavior implemented yet.
 - No image decoding implemented yet.
 - No detector abstraction implemented yet.
 - No real YOLO inference implemented yet.
