@@ -39,12 +39,27 @@ docs/decisions/
 
 ## Current implementation state
 
-No application code yet. Initial docs and constitution are being inserted.
+The repository now has an importable FastAPI skeleton on `main`.
+
+Implemented in PR #2:
+
+- `pyproject.toml`
+- `app/__init__.py`
+- `app/main.py`
+- `tests/__init__.py`
+- `tests/test_app_factory.py`
+- a minimal `create_app()` FastAPI factory
+- a module-level `app` instance
+- a focused factory test
+
+No API endpoints, configuration layer, auth, image decoding, or detector logic exist yet.
 
 ## Next step
 
-Insert the generated files into the repository, commit them, then proceed to PR 1.1 from `docs/roadmap.md`.
+Add configuration loading only in the next PR. Do not add endpoints yet.
 
 ## Warning for future agents
 
 Do not start by generating the whole service. This project must be built in narrow, evidence-backed PRs.
+
+No architecture change has been made; the service is still planned as a CPU-only YOLO11 OpenAI-compatible API.
