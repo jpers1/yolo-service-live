@@ -34,7 +34,7 @@ Planned for MVP:
 - OpenAI-shaped response envelope
 - OpenAI-like error object
 
-Current implementation note: `POST /v1/chat/completions` is implemented with a mocked detector response. The endpoint validates the model, rejects `stream: true`, requires exactly one `image_url` content part, and returns assistant `content` as a JSON string. It does not decode base64 image bytes or run YOLO yet.
+Current implementation note: `POST /v1/chat/completions` is implemented with a mocked detector response. The endpoint validates the model, rejects `stream: true`, requires exactly one `image_url` content part, decodes base64 JPEG/PNG data URLs, and returns assistant `content` as a JSON string. It does not run YOLO yet.
 
 ## Not supported in MVP
 
@@ -65,7 +65,7 @@ The assistant message `content` should be structured JSON containing detection r
 
 The OpenAI chat-completions API documents image content parts using `image_url`, where the `url` field can be either an image URL or base64 encoded image data. OpenAI's vision guide shows examples using `data:image/jpeg;base64,...`.
 
-This service supports that base64 data URL form first.
+This service supports base64 `data:image/jpeg;base64,...` and `data:image/png;base64,...` inputs first. Arbitrary HTTP(S) image URLs remain unsupported in MVP.
 
 ## Why not external URLs in MVP?
 

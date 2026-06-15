@@ -13,6 +13,8 @@ def test_default_settings_load() -> None:
     assert settings.public_model_name == "yolo11n-coco"
     assert settings.model_weights == "yolo11n.pt"
     assert settings.default_confidence == 0.25
+    assert settings.max_request_bytes == 5_242_880
+    assert settings.max_image_pixels == 4_194_304
 
 
 def test_environment_override(monkeypatch: pytest.MonkeyPatch) -> None:

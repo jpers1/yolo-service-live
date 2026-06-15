@@ -1,7 +1,7 @@
 import json
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from app.auth import get_app_settings, require_api_key
 from app.config import Settings
@@ -14,15 +14,25 @@ from app.schemas.openai import (
     ChatContentPart,
 )
 from app.vision.fake_detector import detect_mock_image_url
+from app.vision.image_decode import ImageDecodeError, decode_image_data_url
 
 router = APIRouter(prefix="/v1", dependencies=[Depends(require_api_key)])
 
 
 @router.post("/chat/completions")
-def create_chat_completion(
+async def create_chat_completion(
+    http_request: Request,
     request: ChatCompletionsRequest,
     settings: Annotated[Settings, Depends(get_app_settings)],
 ) -> ChatCompletionResponse:
+    if len(await http_request.body()) > settings.max_request_bytes:
+        raise openai_error(
+            status_code=413,
+            message="Request payload is too large.",
+            error_type="invalid_request_error",
+            code="payload_too_large",
+        )
+
     if request.stream:
         raise _invalid_request(
             message="Streaming is not supported.",
@@ -47,7 +57,31 @@ def create_chat_completion(
             code="multiple_images_not_supported",
         )
 
-    detection_payload = detect_mock_image_url(model=settings.public_model_name)
+    image_url = image_parts[0].image_url
+    if image_url is None:
+        raise _invalid_request(
+            message="Exactly one image_url content part is required.",
+            code="missing_image",
+        )
+
+    try:
+        decoded_image = decode_image_data_url(
+            image_url.url,
+            max_request_bytes=settings.max_request_bytes,
+            max_image_pixels=settings.max_image_pixels,
+        )
+    except ImageDecodeError as exc:
+        raise openai_error(
+            status_code=exc.status_code,
+            message=exc.message,
+            error_type="invalid_request_error",
+            code=exc.code,
+        ) from exc
+
+    detection_payload = detect_mock_image_url(
+        model=settings.public_model_name,
+        image=decoded_image,
+    )
     assistant_content = json.dumps(detection_payload.model_dump(), separators=(",", ":"))
 
     return ChatCompletionResponse(

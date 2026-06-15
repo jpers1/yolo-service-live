@@ -124,12 +124,15 @@ Requires auth.
 - Supported `image_url.url` values are base64 data URLs:
   - `data:image/jpeg;base64,...`
   - `data:image/png;base64,...`
+- JPEG and PNG data URLs are base64-decoded and validated before returning success.
+- The decoded image format must match the declared data URL MIME type.
+- Encoded payload size and decoded image pixel limits are enforced from service settings.
 - Arbitrary external `http://` or `https://` image URLs are rejected in MVP.
 - `stream: true` is not supported in MVP unless a later PR implements it.
 - Text prompt content may be accepted but should not alter detection behavior in MVP.
 - Unknown fields may be ignored if this is documented and tested.
 
-Current implementation note: the endpoint detects the presence of exactly one `image_url` content part but does not decode, fetch, or validate image bytes yet. It returns a mocked detection payload marked with `"mock": true`.
+Current implementation note: the endpoint requires exactly one `image_url` content part, decodes and validates base64 JPEG/PNG data URLs, and rejects external URLs. It still returns a mocked detection payload marked with `"mock": true`; real YOLO inference is not implemented yet.
 
 ### Planned response
 
@@ -233,9 +236,11 @@ Common error codes:
 | 400 | invalid_request_error | missing_image | No image content part found |
 | 400 | invalid_request_error | multiple_images_not_supported | More than one image provided when unsupported |
 | 400 | invalid_request_error | streaming_not_supported | Streaming is not supported |
+| 400 | invalid_request_error | external_image_url_not_supported | Non-data image URLs are not supported |
 | 400 | invalid_request_error | invalid_image_data | Base64/image decoding failed |
 | 400 | invalid_request_error | unsupported_image_mime | MIME type is not allowed |
 | 413 | invalid_request_error | payload_too_large | Request or image too large |
+| 413 | invalid_request_error | image_too_large | Decoded image dimensions are too large |
 | 422 | invalid_request_error | invalid_schema | JSON does not match supported schema |
 | 429 | rate_limit_error | service_busy | CPU worker busy or concurrency limit reached |
 | 500 | server_error | inference_failed | Unexpected inference failure |

@@ -39,7 +39,7 @@ docs/decisions/
 
 ## Current implementation state
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with a mocked detector response, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding and a mocked detector response, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Implemented in PR #2:
 
@@ -63,6 +63,7 @@ Implemented after the skeleton:
 - `app/schemas/openai.py`
 - `app/schemas/detections.py`
 - `app/vision/fake_detector.py`
+- `app/vision/image_decode.py`
 - `.github/workflows/ci.yml`
 - `scripts/check.sh`
 - typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
@@ -76,7 +77,11 @@ Implemented after the skeleton:
 - protected `POST /v1/chat/completions`
 - OpenAI-like chat request/response schemas
 - mocked detector response marked with `"mock": true`
-- image URL content part detection without image decoding
+- image URL content part extraction
+- safe base64 JPEG/PNG data URL decoding
+- MIME allowlist validation
+- payload and pixel limit enforcement
+- decoded image metadata in the mocked chat response source
 - full local verification script running pytest, Ruff, and diff whitespace checks
 - CI running Ruff plus pytest coverage on pull requests and pushes to `main`
 - coverage baseline for `app` with 80% threshold
@@ -86,13 +91,14 @@ Implemented after the skeleton:
 - focused detection schema tests
 - focused error helper tests
 - focused health/readiness endpoint tests
+- focused image decoding tests
 - focused model-list tests
 
-No real image decoding or real detector logic exists yet.
+No real detector logic or YOLO inference exists yet.
 
 ## Next step
 
-Add safe base64 image decoding and validation in the next PR. Do not add YOLO inference yet.
+Add a detector abstraction for decoded images with fake-detector integration. Keep real YOLO inference separate unless a future work order explicitly combines planning or integration.
 
 ## Warning for future agents
 

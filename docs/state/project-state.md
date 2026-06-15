@@ -4,7 +4,7 @@ Last updated: 2026-06-15
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with a mocked detector response, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding and a mocked detector response, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -18,10 +18,12 @@ Merged PR #6 added Bearer authentication, OpenAI-like auth/config errors, and pr
 
 Merged PR #7 added the full local verification script, coverage baseline, and GitHub Actions CI.
 
+Merged PR #8 added the protected `POST /v1/chat/completions` contract with a mocked detector response.
+
 Current baseline merge commit:
 
 ```text
-05748bb08a8a349adb71c06e998859c780b9665d
+0363f296fa60d1f4b6f479982e303841a89e69ca
 ```
 
 ## Product goal
@@ -42,7 +44,7 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 3: Chat contract with mocked detector response.
+Phase 4: Safe image input decoding.
 
 ## Implemented
 
@@ -79,6 +81,7 @@ Phase 3: Chat contract with mocked detector response.
 - `app/schemas/openai.py`
 - `app/vision/__init__.py`
 - `app/vision/fake_detector.py`
+- `app/vision/image_decode.py`
 - `tests/__init__.py`
 - `tests/test_auth.py`
 - `tests/test_app_factory.py`
@@ -87,6 +90,7 @@ Phase 3: Chat contract with mocked detector response.
 - `tests/test_detection_schema.py`
 - `tests/test_errors.py`
 - `tests/test_health.py`
+- `tests/test_image_decode.py`
 - `tests/test_models.py`
 - minimal FastAPI app factory
 - module-level `app`
@@ -101,7 +105,12 @@ Phase 3: Chat contract with mocked detector response.
 - protected `POST /v1/chat/completions`
 - OpenAI-like chat request and response schemas
 - mocked detector response marked with `"mock": true`
-- image URL content part detection without image decoding
+- image URL content part extraction
+- safe base64 JPEG/PNG data URL decoding
+- image MIME allowlist validation
+- encoded image payload limit
+- decoded image pixel limit
+- decoded image metadata in mocked chat response source
 - focused app-factory test
 - focused auth tests
 - focused chat-completions contract tests
@@ -109,15 +118,15 @@ Phase 3: Chat contract with mocked detector response.
 - focused detection schema tests
 - focused error helper tests
 - focused health/readiness endpoint tests
+- focused image decoding tests
 - focused model-list tests
 - full local check script
 - pytest coverage baseline for `app` with 80% threshold
 - GitHub Actions CI for lint and coverage test suite
-- foundational runtime and test dependencies only
+- foundational runtime and test dependencies plus Pillow for safe image decoding
 
 ## Not implemented yet
 
-- Real image decoding.
 - Detector abstraction connected to decoded images.
 - Real YOLO inference.
 - Native detection endpoint.
@@ -139,16 +148,16 @@ Phase 3: Chat contract with mocked detector response.
 
 ## Next recommended task
 
-Add safe base64 image decoding and validation.
+Add detector abstraction for decoded images with fake-detector integration.
 
 Suggested branch:
 
 ```text
-feature/008-base64-image-decoding
+feature/009-detector-abstraction
 ```
 
 Suggested commit message:
 
 ```text
-Add safe base64 image decoding
+Add detector abstraction for decoded images
 ```
