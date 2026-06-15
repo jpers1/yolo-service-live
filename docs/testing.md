@@ -57,14 +57,23 @@ Manual or integration tests should prove:
 
 These tests may be skipped in CI unless explicitly enabled.
 
-The current manual smoke command is:
+The current direct detector smoke command is:
 
 ```bash
-python -m pip install -e ".[yolo]"
+python -m pip install -e ".[dev,yolo]"
 python scripts/smoke_yolo.py
 ```
 
-The script may trigger model download on first run. It is not part of normal CI.
+The current API-level chat-completions smoke command is:
+
+```bash
+python -m pip install -e ".[dev,yolo]"
+python scripts/smoke_chat_yolo.py
+```
+
+These scripts may trigger model download on first run. They are not part of normal CI.
+
+Last local verification on 2026-06-15 completed both manual YOLO smokes against a generated 64x64 JPEG image. The direct detector smoke and API chat smoke both completed on CPU with `detections=0`; the API smoke verified `mock=false`.
 
 ### Browser demo tests
 

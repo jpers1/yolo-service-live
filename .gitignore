@@ -157,6 +157,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# Local model weights downloaded by manual YOLO smoke tests.
+*.pt
+
 # Spyder project settings
 .spyderproject
 .spyproject

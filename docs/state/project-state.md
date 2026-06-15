@@ -24,10 +24,12 @@ Merged PR #9 added safe base64 JPEG/PNG decoding, payload and pixel limits, and 
 
 Merged PR #10 added the detector abstraction and wired chat-completions through an app-state fake detector object.
 
+Merged PR #11 added the lazy-loading YOLO11n CPU detector backend, optional `yolo` dependency extra, and direct manual YOLO smoke script.
+
 Current baseline merge commit:
 
 ```text
-0dde18d191c54fd9084191c8e9b4c1c08b68ac58
+b47e492a3118050e387feadef892f5b5f180fe97
 ```
 
 ## Product goal
@@ -100,6 +102,7 @@ Phase 6: Real YOLO.
 - `tests/test_models.py`
 - `tests/test_yolo_detector.py`
 - `scripts/smoke_yolo.py`
+- `scripts/smoke_chat_yolo.py`
 - minimal FastAPI app factory
 - module-level `app`
 - typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
@@ -121,6 +124,8 @@ Phase 6: Real YOLO.
 - YOLO backend uses configured model weights and confidence threshold
 - YOLO backend returns `mock: false`
 - manual real-model smoke script
+- manual API-level YOLO chat-completions smoke script
+- real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
 - image MIME allowlist validation

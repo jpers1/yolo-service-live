@@ -45,9 +45,12 @@ The service has a configurable real YOLO11n CPU detector backend. It loads `yolo
 Normal CI does not install Ultralytics or download model weights. Use the manual smoke script for real-model verification.
 
 ```bash
-python -m pip install -e ".[yolo]"
+python -m pip install -e ".[dev,yolo]"
 python scripts/smoke_yolo.py
+python scripts/smoke_chat_yolo.py
 ```
+
+Real YOLO runtime was smoke-tested locally on 2026-06-15 with a generated 64x64 JPEG image. The direct detector smoke and OpenAI-style chat-completions smoke both completed on CPU, and the API smoke returned `mock=false`.
 
 The service must run on CPU without CUDA or GPU assumptions.
 
