@@ -264,6 +264,22 @@ Use fake detector tests for normal CI. Real YOLO model tests may be manual or in
 
 Every behavior PR should include focused tests.
 
+Unless a work order explicitly says otherwise, every implementation PR must run the full local verification command before the final report:
+
+```bash
+scripts/check.sh
+```
+
+Equivalent commands are acceptable when the script cannot be used:
+
+```bash
+python -m pytest
+ruff check app tests
+git diff --check
+```
+
+Selected focused tests are allowed during development, but the final report must include the full-suite result. If the full suite cannot run, report the PR as `BLOCKED` or explain the environment blocker honestly.
+
 Minimum test areas:
 
 - config loading;

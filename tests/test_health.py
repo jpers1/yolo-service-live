@@ -49,6 +49,17 @@ def test_readyz_reports_api_key_boolean_without_secret() -> None:
     assert "fake-test-key" not in response_body
 
 
+def test_healthz_and_readyz_remain_public_without_server_api_key() -> None:
+    client = TestClient(create_app(Settings(api_key=None, _env_file=None)))
+
+    health_response = client.get("/healthz")
+    ready_response = client.get("/readyz")
+
+    assert health_response.status_code == 200
+    assert ready_response.status_code == 200
+    assert ready_response.json()["checks"]["api_key_configured"] is False
+
+
 def test_app_factory_accepts_explicit_settings() -> None:
     settings = Settings(
         service_name="Test Service",

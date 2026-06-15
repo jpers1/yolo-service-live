@@ -4,7 +4,7 @@ Last updated: 2026-06-15
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, and `GET /v1/models`.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -14,10 +14,12 @@ Merged PR #4 added the strategic review gate and GPT-5.5 work-unit sizing policy
 
 Merged PR #5 added typed configuration loading and public health/readiness endpoints.
 
+Merged PR #6 added Bearer authentication, OpenAI-like auth/config errors, and protected `GET /v1/models`.
+
 Current baseline merge commit:
 
 ```text
-2da6c1cf72fb3855fefef23e053923cfc0c92d26
+d5b38c8f4badb71968ee89ed836c7baaf6d21423
 ```
 
 ## Product goal
@@ -58,7 +60,9 @@ Phase 2: Auth and model listing.
 - `docs/release-criteria.md`
 - decision records
 - state docs
+- `.github/workflows/ci.yml`
 - `pyproject.toml`
+- `scripts/check.sh`
 - `app/__init__.py`
 - `app/api/__init__.py`
 - `app/api/health.py`
@@ -71,6 +75,7 @@ Phase 2: Auth and model listing.
 - `tests/test_auth.py`
 - `tests/test_app_factory.py`
 - `tests/test_config.py`
+- `tests/test_errors.py`
 - `tests/test_health.py`
 - `tests/test_models.py`
 - minimal FastAPI app factory
@@ -86,8 +91,12 @@ Phase 2: Auth and model listing.
 - focused app-factory test
 - focused auth tests
 - focused config tests
+- focused error helper tests
 - focused health/readiness endpoint tests
 - focused model-list tests
+- full local check script
+- pytest coverage baseline for `app` with 80% threshold
+- GitHub Actions CI for lint and coverage test suite
 - foundational runtime and test dependencies only
 
 ## Not implemented yet
@@ -99,7 +108,6 @@ Phase 2: Auth and model listing.
 - Native detection endpoint.
 - Docker.
 - Browser demo.
-- CI.
 
 ## Current hard constraints
 

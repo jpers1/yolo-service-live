@@ -4,7 +4,7 @@ Status: not started.
 
 ## Summary
 
-RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, and `GET /v1/models`, but no chat-completions behavior or detector integration yet.
+RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, and CI-backed test coverage, but no chat-completions behavior or detector integration yet.
 
 ## Readiness matrix
 
@@ -20,13 +20,14 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | `/healthz` | Implemented | `app/api/health.py`, `tests/test_health.py` | Public liveness endpoint |
 | `/readyz` | Implemented | `app/api/health.py`, `tests/test_health.py` | Public config readiness endpoint; does not load YOLO |
 | `/v1/models` | Implemented | `app/api/models.py`, `tests/test_models.py` | Protected OpenAI-like model list |
+| Testing baseline | Implemented | `scripts/check.sh`, `pyproject.toml`, `tests/` | Full local suite plus 80% app coverage threshold |
 | `/v1/chat/completions` | Missing | None | Not implemented |
 | Image decoding | Missing | None | Not implemented |
 | Fake detector tests | Missing | None | Not implemented |
 | Real YOLO11n CPU inference | Missing | None | Not implemented |
 | Native detection endpoint | Missing | None | Not implemented |
 | Docker | Missing | None | Not implemented |
-| CI | Missing | None | Not implemented |
+| CI | Implemented | `.github/workflows/ci.yml` | Ruff plus pytest coverage on PRs and `main` |
 | Browser demo | Missing | None | Not implemented |
 | CPU backpressure | Missing | None | Not implemented |
 | Security hardening | Missing | None | Not implemented |
