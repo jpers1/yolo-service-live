@@ -39,7 +39,7 @@ docs/decisions/
 
 ## Current implementation state
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading and public health/readiness endpoints.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, and `GET /v1/models`.
 
 Implemented in PR #2:
 
@@ -56,18 +56,27 @@ Implemented after the skeleton:
 
 - `app/config.py`
 - `app/api/health.py`
+- `app/auth.py`
+- `app/errors.py`
+- `app/api/models.py`
 - typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
 - settings stored on `app.state.settings`
 - public `/healthz`
 - public `/readyz`
+- Bearer authentication for protected `/v1` endpoints
+- fail-closed behavior when server API key is missing
+- OpenAI-like error responses for auth/config failures
+- protected `GET /v1/models`
+- focused auth tests
 - focused config tests
 - focused health/readiness endpoint tests
+- focused model-list tests
 
-No auth, `/v1/*` API behavior, image decoding, or detector logic exists yet.
+No `/v1/chat/completions`, image decoding, or detector logic exists yet.
 
 ## Next step
 
-Add Bearer authentication plus `/v1/models` in the next PR. Do not add chat completions, image decoding, or YOLO inference yet.
+Add OpenAI chat-completions schemas plus mocked detector response in the next PR. Do not add image decoding or YOLO inference yet.
 
 ## Warning for future agents
 

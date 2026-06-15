@@ -4,7 +4,7 @@ Last updated: 2026-06-15
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading and public health/readiness endpoints.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, and `GET /v1/models`.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -12,10 +12,12 @@ Merged PR #3 synchronized durable state docs with the FastAPI skeleton baseline.
 
 Merged PR #4 added the strategic review gate and GPT-5.5 work-unit sizing policy.
 
+Merged PR #5 added typed configuration loading and public health/readiness endpoints.
+
 Current baseline merge commit:
 
 ```text
-88e5c58d473f39aa05705ddf036081761209efd1
+2da6c1cf72fb3855fefef23e053923cfc0c92d26
 ```
 
 ## Product goal
@@ -36,7 +38,7 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 1: FastAPI shell.
+Phase 2: Auth and model listing.
 
 ## Implemented
 
@@ -60,27 +62,36 @@ Phase 1: FastAPI shell.
 - `app/__init__.py`
 - `app/api/__init__.py`
 - `app/api/health.py`
+- `app/api/models.py`
+- `app/auth.py`
 - `app/config.py`
+- `app/errors.py`
 - `app/main.py`
 - `tests/__init__.py`
+- `tests/test_auth.py`
 - `tests/test_app_factory.py`
 - `tests/test_config.py`
 - `tests/test_health.py`
+- `tests/test_models.py`
 - minimal FastAPI app factory
 - module-level `app`
 - typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
 - settings stored on `app.state.settings`
 - public `/healthz`
 - public `/readyz`
+- Bearer authentication for protected `/v1` endpoints
+- fail-closed behavior when server API key is missing
+- minimal OpenAI-like error helper for auth/config failures
+- protected `GET /v1/models`
 - focused app-factory test
+- focused auth tests
 - focused config tests
 - focused health/readiness endpoint tests
+- focused model-list tests
 - foundational runtime and test dependencies only
 
 ## Not implemented yet
 
-- Auth.
-- `/v1/models`.
 - `/v1/chat/completions`.
 - Image decoding.
 - Detector abstraction.
@@ -105,16 +116,16 @@ Phase 1: FastAPI shell.
 
 ## Next recommended task
 
-Add Bearer authentication plus `/v1/models`.
+Add OpenAI chat-completions schemas plus mocked detector response.
 
 Suggested branch:
 
 ```text
-feature/005-auth-and-models
+feature/006-chat-schemas-mocked-detector
 ```
 
 Suggested commit message:
 
 ```text
-Add auth and model listing
+Add chat schemas with mocked detector response
 ```

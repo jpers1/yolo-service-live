@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 
 from app.api.health import router as health_router
+from app.api.models import router as models_router
 from app.config import Settings, get_settings
+from app.errors import OpenAIError, openai_error_handler
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -13,7 +15,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         description="CPU-only YOLO11 object detection service with OpenAI-compatible API endpoints.",
     )
     app.state.settings = resolved_settings
+    app.add_exception_handler(OpenAIError, openai_error_handler)
     app.include_router(health_router)
+    app.include_router(models_router)
     return app
 
 
