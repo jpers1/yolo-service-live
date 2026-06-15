@@ -23,7 +23,7 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["app"]
+packages = ["app", "app.api"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -31,4 +31,3 @@ addopts = "-ra"
 
 [tool.ruff]
 line-length = 100
-

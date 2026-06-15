@@ -22,7 +22,7 @@ Build a professional-grade CPU-only YOLO object-detection web service with an Op
 - No database in v0.
 - No Redis in v0.
 - Browser demo uses repeated HTTP first.
-- Split tasks into micro-PRs for GPT-5.4-mini execution agent.
+- Use bounded, reviewable GPT-5.5 work units with strategic AI review before human merge.
 
 ## Durable files to read first
 
@@ -39,7 +39,7 @@ docs/decisions/
 
 ## Current implementation state
 
-The repository now has an importable FastAPI skeleton on `main`.
+The repository now has an importable FastAPI service skeleton with typed configuration loading and public health/readiness endpoints.
 
 Implemented in PR #2:
 
@@ -52,14 +52,25 @@ Implemented in PR #2:
 - a module-level `app` instance
 - a focused factory test
 
-No API endpoints, configuration layer, auth, image decoding, or detector logic exist yet.
+Implemented after the skeleton:
+
+- `app/config.py`
+- `app/api/health.py`
+- typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
+- settings stored on `app.state.settings`
+- public `/healthz`
+- public `/readyz`
+- focused config tests
+- focused health/readiness endpoint tests
+
+No auth, `/v1/*` API behavior, image decoding, or detector logic exists yet.
 
 ## Next step
 
-Add configuration loading only in the next PR. Do not add endpoints yet.
+Add Bearer authentication plus `/v1/models` in the next PR. Do not add chat completions, image decoding, or YOLO inference yet.
 
 ## Warning for future agents
 
-Do not start by generating the whole service. This project must be built in narrow, evidence-backed PRs.
+Do not start by generating the whole service. This project must be built in bounded, evidence-backed PRs.
 
 No architecture change has been made; the service is still planned as a CPU-only YOLO11 OpenAI-compatible API.
