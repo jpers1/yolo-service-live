@@ -1,10 +1,10 @@
 # Project State
 
-Last updated: 2026-06-15
+Last updated: 2026-06-17
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, Docker deployment baseline, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -28,10 +28,12 @@ Merged PR #11 added the lazy-loading YOLO11n CPU detector backend, optional `yol
 
 Merged PR #12 added API-level YOLO chat smoke verification and documented local real-runtime evidence.
 
+Merged PR #13 added the protected native `/v1/vision/detections` endpoint using the shared decoder and detector path.
+
 Current baseline merge commit:
 
 ```text
-95d459d3c7402de7a23f41ae732824fd789469c1
+97feb20c0dda0392f7789228a00df17c3a7c8862
 ```
 
 ## Product goal
@@ -52,13 +54,16 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 7: Native vision endpoint.
+Phase 8: Docker deployment baseline.
 
 ## Implemented
 
 - `AGENTS.md`
 - `README.md`
 - `.env.example`
+- `.dockerignore`
+- `Dockerfile`
+- `compose.yaml`
 - `docs/architecture.md`
 - `docs/api-contract.md`
 - `docs/openai-compatibility.md`
@@ -75,6 +80,7 @@ Phase 7: Native vision endpoint.
 - `.github/workflows/ci.yml`
 - `pyproject.toml`
 - `scripts/check.sh`
+- `scripts/smoke_http_vision.py`
 - `app/__init__.py`
 - `app/api/__init__.py`
 - `app/api/chat.py`
@@ -135,6 +141,11 @@ Phase 7: Native vision endpoint.
 - manual real-model smoke script
 - manual API-level YOLO chat-completions smoke script
 - manual native YOLO vision smoke script
+- Docker fake-backend image build path
+- optional manual YOLO Docker build path
+- Compose fake-backend baseline
+- HTTP smoke script for running service/container
+- CI fake-backend Docker smoke job
 - real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
@@ -156,12 +167,12 @@ Phase 7: Native vision endpoint.
 - full local check script
 - pytest coverage baseline for `app` with 80% threshold
 - GitHub Actions CI for lint and coverage test suite
+- GitHub Actions CI for fake-backend Docker build and HTTP smoke
 - foundational runtime and test dependencies plus Pillow for safe image decoding
 - optional `yolo` extra for Ultralytics
 
 ## Not implemented yet
 
-- Docker.
 - Browser demo.
 - Streaming or WebSocket.
 
@@ -180,16 +191,16 @@ Phase 7: Native vision endpoint.
 
 ## Next recommended task
 
-Add Dockerfile plus deployment documentation, or start the browser demo after a strategic review decision.
+Start the browser demo after strategic review selects the browser slice.
 
 Suggested branch:
 
 ```text
-feature/014-docker-deployment
+feature/015-browser-demo-baseline
 ```
 
 Suggested commit message:
 
 ```text
-Add Docker deployment support
+Add browser demo baseline
 ```

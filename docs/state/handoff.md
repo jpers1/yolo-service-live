@@ -1,6 +1,6 @@
 # Strategic Handoff
 
-Last updated: 2026-06-15
+Last updated: 2026-06-17
 
 ## Project
 
@@ -39,7 +39,7 @@ docs/decisions/
 
 ## Current implementation state
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction with fake and YOLO backends, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Implemented in PR #2:
 
@@ -70,7 +70,11 @@ Implemented after the skeleton:
 - `app/vision/image_decode.py`
 - `app/vision/yolo_detector.py`
 - `.github/workflows/ci.yml`
+- `Dockerfile`
+- `.dockerignore`
+- `compose.yaml`
 - `scripts/check.sh`
+- `scripts/smoke_http_vision.py`
 - `scripts/smoke_yolo.py`
 - `scripts/smoke_chat_yolo.py`
 - `scripts/smoke_vision_yolo.py`
@@ -96,6 +100,11 @@ Implemented after the skeleton:
 - manual real-model smoke script
 - manual API-level YOLO chat-completions smoke script
 - manual native YOLO vision smoke script
+- Docker fake-backend image build path
+- optional manual YOLO Docker build path
+- Compose fake-backend baseline
+- HTTP smoke script for running service/container
+- CI fake-backend Docker smoke job
 - real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
@@ -116,11 +125,11 @@ Implemented after the skeleton:
 - focused model-list tests
 - focused native vision detection tests
 
-Normal CI avoids real YOLO downloads by using fake detectors and fake YOLO model objects. Manual smoke verification on 2026-06-15 completed direct detector and chat-completions YOLO runtime paths with `mock=false` in the API response.
+Normal CI avoids real YOLO downloads by using fake detectors and fake YOLO model objects. CI also builds and smokes the fake-backend Docker image. Manual smoke verification on 2026-06-15 completed direct detector and chat-completions YOLO runtime paths with `mock=false` in the API response.
 
 ## Next step
 
-Add Docker/deployment support or begin browser-demo work after strategic review selects the next slice.
+Begin browser-demo work after strategic review selects the browser slice.
 
 ## Warning for future agents
 

@@ -4,7 +4,7 @@ Status: not started.
 
 ## Summary
 
-RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG image decoding, a detector abstraction with fake and YOLO backends, and CI-backed test coverage, but no Docker or browser demo yet.
+RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG image decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, and CI-backed test coverage, but no browser demo yet.
 
 ## Readiness matrix
 
@@ -27,7 +27,7 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | Fake detector tests | Implemented | `app/vision/fake_detector.py`, `tests/test_detector.py` | Placeholder detector for chat contract only |
 | Real YOLO11n CPU inference | Smoke verified | `app/vision/yolo_detector.py`, `tests/test_yolo_detector.py`, `scripts/smoke_yolo.py`, `scripts/smoke_chat_yolo.py` | Optional YOLO backend runs on CPU; manual direct and API smokes completed locally; normal CI uses fake model objects |
 | Native detection endpoint | Implemented | `app/api/vision.py`, `app/schemas/vision.py`, `tests/test_vision_detections.py` | Returns detection payload directly using shared decoder and detector path |
-| Docker | Missing | None | Not implemented |
+| Docker | Implemented | `Dockerfile`, `.dockerignore`, `compose.yaml`, `scripts/smoke_http_vision.py` | Fake-backend Docker smoke in CI; YOLO Docker path documented/manual |
 | CI | Implemented | `.github/workflows/ci.yml` | Ruff plus pytest coverage on PRs and `main` |
 | Browser demo | Missing | None | Not implemented |
 | CPU backpressure | Missing | None | Not implemented |
@@ -38,7 +38,6 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 
 ## RC1 blockers
 
-- No deployment artifact.
 - No browser demo.
 - Streaming/WebSocket is not implemented.
 - License review not complete for commercial/closed deployment.

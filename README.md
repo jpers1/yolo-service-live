@@ -1,8 +1,8 @@
 # YOLO OpenAI Vision API
 
-Status: initial planning scaffold.
+Status: backend API baseline.
 
-This project will implement a professional-grade, CPU-only YOLO11 object-detection web service with an OpenAI-compatible API surface.
+This project implements a professional-grade, CPU-only YOLO11 object-detection web service with an OpenAI-compatible API surface.
 
 The default model is planned to be:
 
@@ -43,7 +43,7 @@ and call `/v1/chat/completions` with a base64 image in an `image_url` content pa
 - No claim of full OpenAI API compatibility.
 - No production certification.
 
-## Planned endpoints
+## Implemented endpoints
 
 ```text
 GET  /healthz
@@ -51,6 +51,11 @@ GET  /readyz
 GET  /v1/models
 POST /v1/chat/completions
 POST /v1/vision/detections
+```
+
+Planned later:
+
+```text
 GET  /demo
 ```
 
@@ -81,6 +86,51 @@ Authorization: Bearer <YOLO_SERVICE_API_KEY>
 ```
 
 The service must not log API keys, persist images, or fetch arbitrary external image URLs in MVP.
+
+## Local run
+
+```bash
+python -m pip install -e ".[dev]"
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+YOLO_SERVICE_DETECTOR_BACKEND=fake \
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+In another terminal:
+
+```bash
+YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/smoke_http_vision.py
+```
+
+## Docker quickstart
+
+The default Docker path uses the fake detector so it starts quickly and does not download YOLO weights:
+
+```bash
+docker build -t yolo-service-live:fake --build-arg INSTALL_TARGET=. .
+docker run --rm -p 8000:8000 \
+  -e YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+  -e YOLO_SERVICE_DETECTOR_BACKEND=fake \
+  yolo-service-live:fake
+```
+
+Then run:
+
+```bash
+YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/smoke_http_vision.py
+```
+
+The YOLO Docker build is optional and heavier:
+
+```bash
+docker build -t yolo-service-live:yolo --build-arg INSTALL_TARGET='.[yolo]' .
+```
+
+First YOLO inference may download `yolo11n.pt`. PyPI may also pull large Torch runtime wheels, including CUDA-named wheels, even though inference is forced to CPU.
 
 ## Documentation
 

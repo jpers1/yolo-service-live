@@ -48,6 +48,12 @@ Last local smoke verification on 2026-06-15 completed on CPU with a generated 64
 
 This is runtime evidence only, not a performance benchmark. It should not be used to claim high FPS, production throughput, or production readiness.
 
+## Docker performance notes
+
+The CI Docker smoke uses the fake detector and proves container wiring only. It is not YOLO inference performance evidence.
+
+The manual YOLO container path may download `yolo11n.pt` on first inference and may install large Torch runtime wheels. CPU inference inside a container may be slower than local execution depending on CPU, memory limits, image size, and host/container overhead.
+
 ## Browser demo target
 
 Initial browser live mode should target:

@@ -1,0 +1,17 @@
+.env
+.envrc
+.git
+.github
+.mypy_cache
+.pytest_cache
+.ruff_cache
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pt
+build
+dist
+htmlcov
+site
+tests
