@@ -4,7 +4,7 @@ Status: not started.
 
 ## Summary
 
-RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG image decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, and CI-backed test coverage, but streaming/WebSocket and production browser auth are not implemented.
+RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG image decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, boss-demo quickstart, and CI-backed test coverage, but streaming/WebSocket and production browser auth are not implemented.
 
 ## Readiness matrix
 
@@ -32,6 +32,7 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | Browser demo | Implemented | `app/api/demo.py`, `app/static/demo.html`, `tests/test_demo_page.py` | Plain HTML/CSS/JS local demo for native endpoint |
 | CPU backpressure | Implemented | `app/static/demo.js`, `docs/browser-demo.md` | One in-flight request maximum; no request backlog |
 | Local-image CLI demo | Implemented | `scripts/detect_image.py`, `tests/test_detect_image_script.py` | Sends JPEG/PNG files from disk to native endpoint |
+| Boss-demo quickstart | Implemented | `QUICKSTART.md`, `scripts/demo_api_internet_image.py`, `tests/test_demo_api_internet_image.py` | Docker fake backend, client-side internet image API demo, and browser demo path |
 | Security hardening | Missing | None | Not implemented |
 | OpenAI Python example | Missing | None | Not verified |
 | Manual YOLO smoke test | Smoke verified | `scripts/smoke_yolo.py`, `scripts/smoke_chat_yolo.py` | Manual-only; both direct and API smokes completed locally on 2026-06-15 |

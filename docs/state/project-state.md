@@ -4,7 +4,7 @@ Last updated: 2026-06-17
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, boss-demo quickstart, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -34,10 +34,12 @@ Merged PR #14 added the Docker deployment baseline, Compose fake-backend baselin
 
 Merged PR #15 added the browser camera demo baseline and demo static smoke coverage.
 
+Merged PR #16 added the local-image CLI demo for sending JPEG/PNG files from disk to the native endpoint.
+
 Current baseline merge commit:
 
 ```text
-f006d9b983e4af73ab29908d1bc3ddadb9a27490
+bcb7c79df3872f379ab1f568b35234ecc5112220
 ```
 
 ## Product goal
@@ -58,12 +60,13 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 10: Local-image CLI demo.
+Phase 11: Docker boss demo quickstart.
 
 ## Implemented
 
 - `AGENTS.md`
 - `README.md`
+- `QUICKSTART.md`
 - `.env.example`
 - `.dockerignore`
 - `Dockerfile`
@@ -85,6 +88,7 @@ Phase 10: Local-image CLI demo.
 - `pyproject.toml`
 - `scripts/check.sh`
 - `scripts/detect_image.py`
+- `scripts/demo_api_internet_image.py`
 - `scripts/smoke_http_vision.py`
 - `app/__init__.py`
 - `app/api/__init__.py`
@@ -116,6 +120,7 @@ Phase 10: Local-image CLI demo.
 - `tests/test_chat_completions.py`
 - `tests/test_config.py`
 - `tests/test_demo_page.py`
+- `tests/test_demo_api_internet_image.py`
 - `tests/test_detect_image_script.py`
 - `tests/test_detection_schema.py`
 - `tests/test_errors.py`
@@ -166,6 +171,9 @@ Phase 10: Local-image CLI demo.
 - browser demo static smoke script
 - local-image CLI demo for JPEG/PNG files on disk
 - local-image CLI demo tests for encoding, request construction, summaries, and errors
+- Docker boss-demo quickstart
+- internet-image API demo script that downloads image data client-side
+- internet-image demo tests using monkeypatched network calls
 - real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding

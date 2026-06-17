@@ -2,6 +2,15 @@
 
 Status: Docker baseline.
 
+## Boss demo quickstart
+
+For a short Docker-based demo covering container start, an internet-image API test, and
+the browser camera demo, see:
+
+```text
+QUICKSTART.md
+```
+
 ## Local development
 
 Install the lightweight development dependencies and run with the fake detector:
@@ -96,6 +105,18 @@ The local-image CLI demo can target the same container:
 YOLO_SERVICE_API_KEY=change-me-local-dev-key \
 python scripts/detect_image.py ./example.jpg --base-url http://127.0.0.1:8000
 ```
+
+The internet-image API demo downloads a fixed public image client-side and sends it to
+the same endpoint:
+
+```bash
+YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/demo_api_internet_image.py
+```
+
+The service does not fetch the internet image URL. The client script downloads and
+base64-encodes the image before calling the API.
 
 ## Compose
 

@@ -4,6 +4,8 @@ Status: backend API baseline.
 
 This project implements a professional-grade, CPU-only YOLO11 object-detection web service with an OpenAI-compatible API surface.
 
+For a two-minute Docker-based local demo, start with [QUICKSTART.md](QUICKSTART.md).
+
 The default model is planned to be:
 
 ```text
