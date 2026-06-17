@@ -9,6 +9,17 @@ WORKDIR /app
 
 RUN addgroup --system app && adduser --system --ingroup app app
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libgl1 \
+        libglib2.0-0 \
+        libgomp1 \
+        libsm6 \
+        libxext6 \
+        libxrender1 \
+        libxcb1 \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY pyproject.toml README.md ./
 COPY app ./app
 

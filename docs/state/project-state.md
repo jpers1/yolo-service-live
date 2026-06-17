@@ -36,10 +36,12 @@ Merged PR #15 added the browser camera demo baseline and demo static smoke cover
 
 Merged PR #16 added the local-image CLI demo for sending JPEG/PNG files from disk to the native endpoint.
 
+Merged PR #17 added the Docker boss-demo quickstart and internet-image API demo script.
+
 Current baseline merge commit:
 
 ```text
-bcb7c79df3872f379ab1f568b35234ecc5112220
+422d57fc309c525e99f38c7a89d6138abe0a0bce
 ```
 
 ## Product goal
@@ -60,7 +62,7 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 11: Docker boss demo quickstart.
+Phase 12: YOLO Docker runtime repair.
 
 ## Implemented
 
@@ -160,6 +162,7 @@ Phase 11: Docker boss demo quickstart.
 - manual native YOLO vision smoke script
 - Docker fake-backend image build path
 - optional manual YOLO Docker build path
+- OpenCV/Ultralytics native runtime libraries in the Docker image for YOLO backend use
 - Compose fake-backend baseline
 - HTTP smoke script for running service/container
 - CI fake-backend Docker smoke job
