@@ -4,7 +4,7 @@ Last updated: 2026-06-17
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, boss-demo quickstart, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, real YOLO boss-demo quickstart, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -38,10 +38,12 @@ Merged PR #16 added the local-image CLI demo for sending JPEG/PNG files from dis
 
 Merged PR #17 added the Docker boss-demo quickstart and internet-image API demo script.
 
+Merged PR #18 fixed real YOLO Docker runtime libraries and verified the real YOLO Docker backend path with `mock=false`.
+
 Current baseline merge commit:
 
 ```text
-422d57fc309c525e99f38c7a89d6138abe0a0bce
+5abca8ae14ae102f3f4d3a2723aaa54b2550ab31
 ```
 
 ## Product goal
@@ -62,7 +64,7 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 12: YOLO Docker runtime repair.
+Phase 13: Real YOLO boss quickstart.
 
 ## Implemented
 
@@ -174,7 +176,8 @@ Phase 12: YOLO Docker runtime repair.
 - browser demo static smoke script
 - local-image CLI demo for JPEG/PNG files on disk
 - local-image CLI demo tests for encoding, request construction, summaries, and errors
-- Docker boss-demo quickstart
+- real YOLO Docker boss-demo quickstart
+- fake backend fallback/developer smoke path
 - internet-image API demo script that downloads image data client-side
 - internet-image demo tests using monkeypatched network calls
 - real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs

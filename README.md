@@ -4,15 +4,19 @@ Status: backend API baseline.
 
 This project implements a professional-grade, CPU-only YOLO11 object-detection web service with an OpenAI-compatible API surface.
 
-For a two-minute Docker-based local demo, start with [QUICKSTART.md](QUICKSTART.md).
+## Quickstart
 
-The default model is planned to be:
+For the first real end-to-end test, use the real YOLO Docker quickstart:
+
+See [QUICKSTART.md](QUICKSTART.md).
+
+The default model is:
 
 ```text
 yolo11n.pt
 ```
 
-The public API model name is planned to be:
+The public API model name is:
 
 ```text
 yolo11n-coco
@@ -56,7 +60,9 @@ POST /v1/vision/detections
 GET  /demo
 ```
 
-The browser demo is a local/internal plain HTML page for exercising the native endpoint.
+`/v1/chat/completions` is the OpenAI-compatible envelope path. The native
+`/v1/vision/detections` endpoint returns detection JSON directly. The browser
+demo is a local/internal plain HTML page for exercising the native endpoint.
 
 ## Planned stack
 
@@ -124,9 +130,26 @@ The script loads the local image file, encodes it as a base64 data URL, sends it
 `POST /v1/vision/detections`, and prints a concise detection summary. It does not print
 the API key or base64 payload.
 
-## Docker quickstart
+## Real YOLO Docker test
 
-The default Docker path uses the fake detector so it starts quickly and does not download YOLO weights:
+The real YOLO Docker test is documented in [QUICKSTART.md](QUICKSTART.md). It
+builds the optional YOLO image, runs the real backend, and verifies
+`mock=false` with an internet-image API test.
+
+Minimal build command:
+
+```bash
+sudo docker build -t yolo-service-live:yolo --build-arg INSTALL_TARGET='.[yolo]' .
+```
+
+First YOLO inference may download `yolo11n.pt`. PyPI may also pull large Torch
+runtime wheels, including CUDA-named wheels, even though inference is forced to
+CPU.
+
+## Fake backend developer smoke
+
+The fake backend is for lightweight CI/developer wiring checks only. It is not
+the primary boss demo and returns `mock=true`.
 
 ```bash
 docker build -t yolo-service-live:fake --build-arg INSTALL_TARGET=. .
@@ -136,34 +159,13 @@ docker run --rm -p 8000:8000 \
   yolo-service-live:fake
 ```
 
-Then run:
+Then run the fake-backend smoke:
 
 ```bash
 YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
 YOLO_SERVICE_API_KEY=change-me-local-dev-key \
 python scripts/smoke_http_vision.py
 ```
-
-The same running container serves:
-
-```text
-http://127.0.0.1:8000/demo
-```
-
-The local-image CLI demo works against the Docker container too:
-
-```bash
-YOLO_SERVICE_API_KEY=change-me-local-dev-key \
-python scripts/detect_image.py ./example.jpg --base-url http://127.0.0.1:8000
-```
-
-The YOLO Docker build is optional and heavier:
-
-```bash
-docker build -t yolo-service-live:yolo --build-arg INSTALL_TARGET='.[yolo]' .
-```
-
-First YOLO inference may download `yolo11n.pt`. PyPI may also pull large Torch runtime wheels, including CUDA-named wheels, even though inference is forced to CPU.
 
 ## Documentation
 
