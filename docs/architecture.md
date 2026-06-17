@@ -101,7 +101,8 @@ The OpenAI-compatible adapter should:
 Current implementation path:
 
 ```text
-chat endpoint -> image decoder -> detector interface -> fake detector or YOLO detector
+chat endpoint -> image decoder -> detector interface -> fake detector or YOLO detector -> OpenAI chat envelope
+native endpoint -> image decoder -> detector interface -> fake detector or YOLO detector -> detection JSON
 ```
 
 The detector is stored on FastAPI app state so tests and runtime wiring can inject a different implementation. The default runtime backend is configurable through `YOLO_SERVICE_DETECTOR_BACKEND`.
@@ -115,6 +116,8 @@ POST /v1/vision/detections
 ```
 
 It should accept an image data URL plus optional thresholds and return the detection payload directly.
+
+Current implementation accepts a JSON body with `image.url`, optional `model`, and optional `include_normalized_boxes`. It reuses the same image decoder and detector abstraction as chat completions and returns `DetectionPayload` directly.
 
 ## Browser demo
 

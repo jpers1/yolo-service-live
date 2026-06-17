@@ -39,7 +39,7 @@ docs/decisions/
 
 ## Current implementation state
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding, a detector abstraction with fake and YOLO backends, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction with fake and YOLO backends, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Implemented in PR #2:
 
@@ -60,8 +60,11 @@ Implemented after the skeleton:
 - `app/errors.py`
 - `app/api/models.py`
 - `app/api/chat.py`
+- `app/api/detection_common.py`
+- `app/api/vision.py`
 - `app/schemas/openai.py`
 - `app/schemas/detections.py`
+- `app/schemas/vision.py`
 - `app/vision/detector.py`
 - `app/vision/fake_detector.py`
 - `app/vision/image_decode.py`
@@ -70,6 +73,7 @@ Implemented after the skeleton:
 - `scripts/check.sh`
 - `scripts/smoke_yolo.py`
 - `scripts/smoke_chat_yolo.py`
+- `scripts/smoke_vision_yolo.py`
 - typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
 - settings stored on `app.state.settings`
 - public `/healthz`
@@ -79,7 +83,9 @@ Implemented after the skeleton:
 - OpenAI-like error responses for auth/config failures
 - protected `GET /v1/models`
 - protected `POST /v1/chat/completions`
+- protected native `POST /v1/vision/detections`
 - OpenAI-like chat request/response schemas
+- native vision request schema
 - mocked detector response marked with `"mock": true`
 - detector abstraction for decoded images
 - fake detector object stored on `app.state.detector`
@@ -89,6 +95,7 @@ Implemented after the skeleton:
 - optional `yolo` dependency extra for manual/runtime real inference
 - manual real-model smoke script
 - manual API-level YOLO chat-completions smoke script
+- manual native YOLO vision smoke script
 - real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
@@ -107,12 +114,13 @@ Implemented after the skeleton:
 - focused health/readiness endpoint tests
 - focused image decoding tests
 - focused model-list tests
+- focused native vision detection tests
 
 Normal CI avoids real YOLO downloads by using fake detectors and fake YOLO model objects. Manual smoke verification on 2026-06-15 completed direct detector and chat-completions YOLO runtime paths with `mock=false` in the API response.
 
 ## Next step
 
-Add native `/v1/vision/detections` using the existing image decoder and detector abstraction.
+Add Docker/deployment support or begin browser-demo work after strategic review selects the next slice.
 
 ## Warning for future agents
 
