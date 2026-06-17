@@ -4,7 +4,7 @@ Status: not started.
 
 ## Summary
 
-RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG image decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, and CI-backed test coverage, but no browser demo yet.
+RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG image decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, browser demo baseline, and CI-backed test coverage, but streaming/WebSocket and production browser auth are not implemented.
 
 ## Readiness matrix
 
@@ -29,8 +29,8 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | Native detection endpoint | Implemented | `app/api/vision.py`, `app/schemas/vision.py`, `tests/test_vision_detections.py` | Returns detection payload directly using shared decoder and detector path |
 | Docker | Implemented | `Dockerfile`, `.dockerignore`, `compose.yaml`, `scripts/smoke_http_vision.py` | Fake-backend Docker smoke in CI; YOLO Docker path documented/manual |
 | CI | Implemented | `.github/workflows/ci.yml` | Ruff plus pytest coverage on PRs and `main` |
-| Browser demo | Missing | None | Not implemented |
-| CPU backpressure | Missing | None | Not implemented |
+| Browser demo | Implemented | `app/api/demo.py`, `app/static/demo.html`, `tests/test_demo_page.py` | Plain HTML/CSS/JS local demo for native endpoint |
+| CPU backpressure | Implemented | `app/static/demo.js`, `docs/browser-demo.md` | One in-flight request maximum; no request backlog |
 | Security hardening | Missing | None | Not implemented |
 | OpenAI Python example | Missing | None | Not verified |
 | Manual YOLO smoke test | Smoke verified | `scripts/smoke_yolo.py`, `scripts/smoke_chat_yolo.py` | Manual-only; both direct and API smokes completed locally on 2026-06-15 |
@@ -38,8 +38,8 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 
 ## RC1 blockers
 
-- No browser demo.
 - Streaming/WebSocket is not implemented.
+- Production browser auth/session design is not implemented.
 - License review not complete for commercial/closed deployment.
 
 ## RC1 exit criteria

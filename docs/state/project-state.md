@@ -4,7 +4,7 @@ Last updated: 2026-06-17
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, Docker deployment baseline, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, Docker deployment baseline, browser demo baseline, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -30,10 +30,12 @@ Merged PR #12 added API-level YOLO chat smoke verification and documented local 
 
 Merged PR #13 added the protected native `/v1/vision/detections` endpoint using the shared decoder and detector path.
 
+Merged PR #14 added the Docker deployment baseline, Compose fake-backend baseline, HTTP smoke script, and CI fake-backend Docker smoke.
+
 Current baseline merge commit:
 
 ```text
-97feb20c0dda0392f7789228a00df17c3a7c8862
+86d5c103accdb0ab3d595fda944951a68b72f9df
 ```
 
 ## Product goal
@@ -54,7 +56,7 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 8: Docker deployment baseline.
+Phase 9: Browser demo baseline.
 
 ## Implemented
 
@@ -84,6 +86,7 @@ Phase 8: Docker deployment baseline.
 - `app/__init__.py`
 - `app/api/__init__.py`
 - `app/api/chat.py`
+- `app/api/demo.py`
 - `app/api/detection_common.py`
 - `app/api/health.py`
 - `app/api/models.py`
@@ -92,6 +95,9 @@ Phase 8: Docker deployment baseline.
 - `app/config.py`
 - `app/errors.py`
 - `app/main.py`
+- `app/static/demo.html`
+- `app/static/demo.css`
+- `app/static/demo.js`
 - `app/schemas/__init__.py`
 - `app/schemas/detections.py`
 - `app/schemas/openai.py`
@@ -106,6 +112,7 @@ Phase 8: Docker deployment baseline.
 - `tests/test_app_factory.py`
 - `tests/test_chat_completions.py`
 - `tests/test_config.py`
+- `tests/test_demo_page.py`
 - `tests/test_detection_schema.py`
 - `tests/test_errors.py`
 - `tests/test_health.py`
@@ -116,6 +123,7 @@ Phase 8: Docker deployment baseline.
 - `scripts/smoke_yolo.py`
 - `scripts/smoke_chat_yolo.py`
 - `scripts/smoke_vision_yolo.py`
+- `scripts/smoke_demo_static.py`
 - minimal FastAPI app factory
 - module-level `app`
 - typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
@@ -146,6 +154,12 @@ Phase 8: Docker deployment baseline.
 - Compose fake-backend baseline
 - HTTP smoke script for running service/container
 - CI fake-backend Docker smoke job
+- browser demo at `GET /demo`
+- local browser demo static assets at `/demo-static/demo.css` and `/demo-static/demo.js`
+- browser demo camera preview, JPEG capture, native endpoint calls, and overlay rendering
+- browser demo request-after-response loop with one in-flight request maximum
+- browser demo static route tests
+- browser demo static smoke script
 - real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
@@ -173,8 +187,8 @@ Phase 8: Docker deployment baseline.
 
 ## Not implemented yet
 
-- Browser demo.
 - Streaming or WebSocket.
+- Production browser auth/session design.
 
 ## Current hard constraints
 
@@ -185,22 +199,21 @@ Phase 8: Docker deployment baseline.
 - No Redis.
 - No arbitrary external image URL fetching in MVP.
 - No image persistence.
-- Browser demo later.
 - GPT-5.5 work units must remain bounded, reviewable, and evidence-backed.
 - Every PR must pass through strategic AI review before human merge.
 
 ## Next recommended task
 
-Start the browser demo after strategic review selects the browser slice.
+Select the next RC1 hardening slice after strategic review.
 
 Suggested branch:
 
 ```text
-feature/015-browser-demo-baseline
+feature/016-rc1-hardening
 ```
 
 Suggested commit message:
 
 ```text
-Add browser demo baseline
+Harden RC1 demo readiness
 ```

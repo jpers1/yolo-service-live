@@ -21,6 +21,14 @@ YOLO_SERVICE_API_KEY=change-me-local-dev-key \
 python scripts/smoke_http_vision.py
 ```
 
+Open the browser demo at:
+
+```text
+http://127.0.0.1:8000/demo
+```
+
+Enter the API key in the browser page only for local/demo use.
+
 ## Environment variables
 
 See `.env.example`.
@@ -59,6 +67,19 @@ YOLO_SERVICE_API_KEY=change-me-local-dev-key \
 python scripts/smoke_http_vision.py
 ```
 
+The running container also serves the browser demo:
+
+```text
+http://127.0.0.1:8000/demo
+```
+
+Static demo assets can be checked with:
+
+```bash
+YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
+python scripts/smoke_demo_static.py
+```
+
 ## Compose
 
 The default Compose service uses the fake detector:
@@ -74,6 +95,8 @@ YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
 YOLO_SERVICE_API_KEY=change-me-local-dev-key \
 python scripts/smoke_http_vision.py
 ```
+
+The Compose service also serves `/demo`.
 
 ## Manual YOLO container
 
@@ -97,6 +120,9 @@ python scripts/smoke_http_vision.py
 ```
 
 First YOLO inference may download `yolo11n.pt`. PyPI may pull large Torch runtime wheels, including CUDA-named wheels, even though this service forces inference to CPU.
+
+The browser demo can target the YOLO-backed container, but first inference may be slow
+because the model may download and CPU inference is synchronous.
 
 ## Healthcheck
 

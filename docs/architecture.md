@@ -10,14 +10,14 @@ It exposes Ultralytics YOLO11n COCO detection through:
 
 1. an OpenAI-compatible `/v1/chat/completions` endpoint;
 2. a native computer-vision endpoint, `/v1/vision/detections`;
-3. a later browser camera demo.
+3. a browser camera demo.
 
 The service is not a general chatbot. It uses an OpenAI-shaped request/response envelope only to make existing OpenAI-style client code easy to adapt.
 
 ## High-level architecture
 
 ```text
-OpenAI-style client or browser
+OpenAI-style client or browser demo
         |
         v
 FastAPI application
@@ -64,11 +64,10 @@ app/
     yolo_service.py
     postprocess.py
 
-  web/
-    static/
-      index.html
-      app.js
-      style.css
+  static/
+    demo.html
+    demo.js
+    demo.css
 ```
 
 ## Runtime model
@@ -127,7 +126,10 @@ The browser demo is intentionally simple:
 camera -> canvas -> JPEG data URL -> /v1/vision/detections -> canvas overlay
 ```
 
-It should not use React/Vite/Next.js in the first version. Plain HTML, CSS, and JavaScript are sufficient.
+It is served by FastAPI at `GET /demo`, with local assets under `/demo-static/`.
+It does not use React/Vite/Next.js. Plain HTML, CSS, and JavaScript are sufficient.
+The browser loop sends one request at a time and waits for the response before sending
+another frame.
 
 ## CPU-only design implications
 
