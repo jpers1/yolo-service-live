@@ -136,6 +136,12 @@ For local/internal demo, the page may allow the user to type the API key into a 
 
 Do not hard-code the real API key in public JavaScript.
 
+The current `/demo` page keeps the entered API key in browser memory only and uses it
+for same-origin calls to `/v1/vision/detections`. It must be treated as local/demo-only
+because any browser-entered API key is visible to that page runtime.
+
+Do not expose the demo on the public internet with a shared real API key.
+
 For public deployment, a different auth/session model is needed. That is outside v0.
 
 ## CORS

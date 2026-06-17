@@ -51,15 +51,10 @@ GET  /readyz
 GET  /v1/models
 POST /v1/chat/completions
 POST /v1/vision/detections
-```
-
-Planned later:
-
-```text
 GET  /demo
 ```
 
-The browser demo comes after the backend MVP.
+The browser demo is a local/internal plain HTML page for exercising the native endpoint.
 
 ## Planned stack
 
@@ -104,6 +99,15 @@ YOLO_SERVICE_API_KEY=change-me-local-dev-key \
 python scripts/smoke_http_vision.py
 ```
 
+Open the browser demo at:
+
+```text
+http://127.0.0.1:8000/demo
+```
+
+Enter the API key in the page only for local/demo use. Do not expose this demo with a
+shared real API key on the public internet.
+
 ## Docker quickstart
 
 The default Docker path uses the fake detector so it starts quickly and does not download YOLO weights:
@@ -122,6 +126,12 @@ Then run:
 YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
 YOLO_SERVICE_API_KEY=change-me-local-dev-key \
 python scripts/smoke_http_vision.py
+```
+
+The same running container serves:
+
+```text
+http://127.0.0.1:8000/demo
 ```
 
 The YOLO Docker build is optional and heavier:

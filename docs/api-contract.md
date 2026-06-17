@@ -28,12 +28,12 @@ GET  /readyz
 GET  /v1/models
 POST /v1/chat/completions
 POST /v1/vision/detections
+GET  /demo
 ```
 
 Later:
 
 ```text
-GET /demo
 WebSocket /v1/vision/detections/stream
 ```
 
@@ -215,6 +215,25 @@ Successful response:
   "mock": false
 }
 ```
+
+## GET /demo
+
+Purpose: local/internal browser camera demo for the native vision endpoint.
+
+No API authentication is required to load the page or static assets. The page asks the
+user to enter the API key and sends it as a Bearer token when calling protected `/v1/*`
+endpoints.
+
+Static assets are served from:
+
+```text
+/demo-static/demo.css
+/demo-static/demo.js
+```
+
+The demo uses same-origin API calls, `navigator.mediaDevices.getUserMedia`, a canvas
+JPEG capture, and `POST /v1/vision/detections`. It sends only one request at a time and
+does not implement WebSocket or streaming.
 
 ## Error shape
 

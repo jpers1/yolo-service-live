@@ -108,13 +108,29 @@ Then run `scripts/smoke_http_vision.py` with the same API key.
 
 ### Browser demo tests
 
-Initial browser demo can be manually tested.
+The browser demo baseline has static route tests:
+
+```bash
+python -m pytest tests/test_demo_page.py
+```
+
+The static smoke script verifies `/demo` and local assets without requiring a real camera:
+
+```bash
+python scripts/smoke_demo_static.py
+```
+
+When `YOLO_SERVICE_BASE_URL` is set, the smoke checks a running HTTP service. Without a
+running service, it falls back to FastAPI `TestClient`.
+
+CI runs the demo static smoke against the fake-backend Docker container.
+
+No real camera access is required in CI.
 
 Later optional tests:
 
-- static page loads;
-- JavaScript sends request;
 - canvas overlay logic can be unit-tested separately if worthwhile.
+- headless browser rendering with fake media devices.
 
 ## Required commands
 
@@ -191,6 +207,7 @@ ruff check app tests
 python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=80
 docker build -t yolo-service-live:fake --build-arg INSTALL_TARGET=. .
 python scripts/smoke_http_vision.py
+python scripts/smoke_demo_static.py
 ```
 
 Real model download should not be mandatory in first CI unless explicitly planned.

@@ -56,16 +56,17 @@ The manual YOLO container path may download `yolo11n.pt` on first inference and 
 
 ## Browser demo target
 
-Initial browser live mode should target:
+The browser demo baseline targets:
 
 ```text
-1-5 FPS
+1 FPS request-after-response loop
 one in-flight request at a time
 frame dropping instead of queueing
 visible latency display
-visible inference time display
-confidence threshold control
 ```
+
+It does not implement WebSocket or streaming. CPU YOLO inference may be slow, so the
+browser waits for each response before submitting another frame.
 
 ## Backpressure rule
 

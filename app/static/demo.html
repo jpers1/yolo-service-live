@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>YOLO Vision Demo</title>
+    <link rel="stylesheet" href="/demo-static/demo.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">CPU-only native vision endpoint</p>
+        <h1>YOLO Vision Demo</h1>
+        <p>
+          This local demo captures a camera frame, sends it to
+          <code>/v1/vision/detections</code>, and draws returned detections on the preview.
+        </p>
+      </section>
+
+      <section class="panel controls" aria-label="Demo controls">
+        <label class="field">
+          <span>API key</span>
+          <input
+            id="api-key"
+            type="password"
+            autocomplete="off"
+            placeholder="Enter the local demo API key"
+          >
+        </label>
+        <p class="warning">
+          Local/demo use only: browser-entered API keys are visible to the page runtime.
+          Do not expose this demo with a shared real key on the public internet.
+        </p>
+        <div class="button-row">
+          <button id="start-button" type="button">Start camera</button>
+          <button id="stop-button" type="button" disabled>Stop camera</button>
+        </div>
+      </section>
+
+      <section class="panel stage" aria-label="Camera preview">
+        <div class="video-wrap">
+          <video id="preview" playsinline muted></video>
+          <canvas id="overlay"></canvas>
+        </div>
+        <canvas id="capture" hidden></canvas>
+      </section>
+
+      <section class="panel status-grid" aria-label="Status">
+        <div>
+          <span class="label">Camera</span>
+          <strong id="camera-status">stopped</strong>
+        </div>
+        <div>
+          <span class="label">Request</span>
+          <strong id="request-status">idle</strong>
+        </div>
+        <div>
+          <span class="label">Last round trip</span>
+          <strong id="latency-status">none</strong>
+        </div>
+        <div>
+          <span class="label">Detections</span>
+          <strong id="detection-status">0</strong>
+        </div>
+      </section>
+
+      <section class="panel instructions">
+        <h2>How it works</h2>
+        <p>
+          Click start, approve camera access, and keep this page on the same origin as the API.
+          The loop sends one JPEG frame at a time and waits for the response before sending
+          another frame, so no request backlog is built.
+        </p>
+        <p id="error-status" class="error" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+    <script src="/demo-static/demo.js" defer></script>
+  </body>
+</html>

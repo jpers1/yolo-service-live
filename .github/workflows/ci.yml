@@ -78,6 +78,11 @@ jobs:
           YOLO_SERVICE_API_KEY: ci-test-key
         run: python scripts/smoke_http_vision.py
 
+      - name: Run demo static smoke
+        env:
+          YOLO_SERVICE_BASE_URL: http://127.0.0.1:8000
+        run: python scripts/smoke_demo_static.py
+
       - name: Stop container
         if: always()
         run: docker stop yolo-service-live-ci-smoke || true
