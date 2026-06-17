@@ -4,7 +4,7 @@ Last updated: 2026-06-17
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, Docker deployment baseline, browser demo baseline, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -32,10 +32,12 @@ Merged PR #13 added the protected native `/v1/vision/detections` endpoint using 
 
 Merged PR #14 added the Docker deployment baseline, Compose fake-backend baseline, HTTP smoke script, and CI fake-backend Docker smoke.
 
+Merged PR #15 added the browser camera demo baseline and demo static smoke coverage.
+
 Current baseline merge commit:
 
 ```text
-86d5c103accdb0ab3d595fda944951a68b72f9df
+f006d9b983e4af73ab29908d1bc3ddadb9a27490
 ```
 
 ## Product goal
@@ -56,7 +58,7 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 9: Browser demo baseline.
+Phase 10: Local-image CLI demo.
 
 ## Implemented
 
@@ -82,6 +84,7 @@ Phase 9: Browser demo baseline.
 - `.github/workflows/ci.yml`
 - `pyproject.toml`
 - `scripts/check.sh`
+- `scripts/detect_image.py`
 - `scripts/smoke_http_vision.py`
 - `app/__init__.py`
 - `app/api/__init__.py`
@@ -113,6 +116,7 @@ Phase 9: Browser demo baseline.
 - `tests/test_chat_completions.py`
 - `tests/test_config.py`
 - `tests/test_demo_page.py`
+- `tests/test_detect_image_script.py`
 - `tests/test_detection_schema.py`
 - `tests/test_errors.py`
 - `tests/test_health.py`
@@ -160,6 +164,8 @@ Phase 9: Browser demo baseline.
 - browser demo request-after-response loop with one in-flight request maximum
 - browser demo static route tests
 - browser demo static smoke script
+- local-image CLI demo for JPEG/PNG files on disk
+- local-image CLI demo tests for encoding, request construction, summaries, and errors
 - real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding

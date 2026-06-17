@@ -39,7 +39,7 @@ docs/decisions/
 
 ## Current implementation state
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, browser demo baseline, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Implemented in PR #2:
 
@@ -78,6 +78,7 @@ Implemented after the skeleton:
 - `.dockerignore`
 - `compose.yaml`
 - `scripts/check.sh`
+- `scripts/detect_image.py`
 - `scripts/smoke_http_vision.py`
 - `scripts/smoke_demo_static.py`
 - `scripts/smoke_yolo.py`
@@ -114,6 +115,8 @@ Implemented after the skeleton:
 - browser demo static assets under `/demo-static/`
 - browser demo native endpoint loop with one in-flight request maximum
 - browser demo route tests and static smoke script
+- local-image CLI demo for sending JPEG/PNG files from disk to `/v1/vision/detections`
+- local-image CLI helper tests
 - real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
@@ -138,8 +141,9 @@ Normal CI avoids real YOLO downloads by using fake detectors and fake YOLO model
 
 ## Next step
 
-Select the next RC1 hardening slice after strategic review. Streaming/WebSocket and
-production browser authentication/session design remain unimplemented.
+Select the next RC1 hardening slice after strategic review. Browser manual camera
+validation, streaming/WebSocket, and production browser authentication/session design
+remain unimplemented.
 
 ## Warning for future agents
 

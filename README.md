@@ -108,6 +108,20 @@ http://127.0.0.1:8000/demo
 Enter the API key in the page only for local/demo use. Do not expose this demo with a
 shared real API key on the public internet.
 
+## Command-line local image demo
+
+With a service running locally, send a JPEG or PNG file from disk to the native endpoint:
+
+```bash
+python -m pip install -e ".[dev]"
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/detect_image.py ./example.jpg --base-url http://127.0.0.1:8000
+```
+
+The script loads the local image file, encodes it as a base64 data URL, sends it to
+`POST /v1/vision/detections`, and prints a concise detection summary. It does not print
+the API key or base64 payload.
+
 ## Docker quickstart
 
 The default Docker path uses the fake detector so it starts quickly and does not download YOLO weights:
@@ -132,6 +146,13 @@ The same running container serves:
 
 ```text
 http://127.0.0.1:8000/demo
+```
+
+The local-image CLI demo works against the Docker container too:
+
+```bash
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/detect_image.py ./example.jpg --base-url http://127.0.0.1:8000
 ```
 
 The YOLO Docker build is optional and heavier:
