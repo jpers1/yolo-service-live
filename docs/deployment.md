@@ -4,8 +4,8 @@ Status: Docker baseline.
 
 ## Boss demo quickstart
 
-For a short Docker-based demo covering container start, an internet-image API test, and
-the browser camera demo, see:
+For the primary real YOLO Docker boss test covering container start, an
+internet-image API test with `mock=false`, and the browser camera demo, see:
 
 ```text
 QUICKSTART.md
@@ -68,7 +68,9 @@ Do not commit `.env` or real secrets.
 
 ## Docker fake-backend baseline
 
-The default container path installs only the base package and uses the fake detector. It is CI-safe and does not install Ultralytics or download YOLO weights.
+The fake-backend path installs only the base package and uses the fake detector.
+It is CI-safe and does not install Ultralytics or download YOLO weights. It is
+not the primary boss demo.
 
 ```bash
 docker build -t yolo-service-live:fake --build-arg INSTALL_TARGET=. .
@@ -138,7 +140,7 @@ The Compose service also serves `/demo`.
 
 ## Manual YOLO container
 
-The YOLO build path is manual and heavier:
+The real YOLO build path is the primary boss-test path and is heavier:
 
 ```bash
 docker build -t yolo-service-live:yolo --build-arg INSTALL_TARGET='.[yolo]' .

@@ -4,7 +4,7 @@ Status: not started.
 
 ## Summary
 
-RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG image decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, boss-demo quickstart, and CI-backed test coverage, but streaming/WebSocket and production browser auth are not implemented.
+RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG image decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, real YOLO boss-demo quickstart, and CI-backed test coverage, but streaming/WebSocket and production browser auth are not implemented.
 
 ## Readiness matrix
 
@@ -25,14 +25,14 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | Image decoding | Implemented | `app/vision/image_decode.py`, `tests/test_image_decode.py` | Base64 JPEG/PNG data URLs with MIME, payload, and pixel validation |
 | Detector abstraction | Implemented | `app/vision/detector.py`, `app/vision/fake_detector.py`, `tests/test_detector.py` | Chat endpoint uses app-state detector interface with fake detector |
 | Fake detector tests | Implemented | `app/vision/fake_detector.py`, `tests/test_detector.py` | Placeholder detector for chat contract only |
-| Real YOLO11n CPU inference | Smoke verified | `app/vision/yolo_detector.py`, `tests/test_yolo_detector.py`, `scripts/smoke_yolo.py`, `scripts/smoke_chat_yolo.py` | Optional YOLO backend runs on CPU; manual direct and API smokes completed locally; normal CI uses fake model objects |
+| Real YOLO11n CPU inference | Smoke verified | `app/vision/yolo_detector.py`, `tests/test_yolo_detector.py`, `scripts/smoke_yolo.py`, `scripts/smoke_chat_yolo.py` | Optional YOLO backend runs on CPU; manual direct, API, and Docker smokes completed locally; normal CI uses fake model objects |
 | Native detection endpoint | Implemented | `app/api/vision.py`, `app/schemas/vision.py`, `tests/test_vision_detections.py` | Returns detection payload directly using shared decoder and detector path |
 | Docker | Implemented | `Dockerfile`, `.dockerignore`, `compose.yaml`, `scripts/smoke_http_vision.py` | Fake-backend Docker smoke in CI; YOLO Docker path includes OpenCV/Ultralytics native runtime libraries |
 | CI | Implemented | `.github/workflows/ci.yml` | Ruff plus pytest coverage on PRs and `main` |
 | Browser demo | Implemented | `app/api/demo.py`, `app/static/demo.html`, `tests/test_demo_page.py` | Plain HTML/CSS/JS local demo for native endpoint |
 | CPU backpressure | Implemented | `app/static/demo.js`, `docs/browser-demo.md` | One in-flight request maximum; no request backlog |
 | Local-image CLI demo | Implemented | `scripts/detect_image.py`, `tests/test_detect_image_script.py` | Sends JPEG/PNG files from disk to native endpoint |
-| Boss-demo quickstart | Implemented | `QUICKSTART.md`, `scripts/demo_api_internet_image.py`, `tests/test_demo_api_internet_image.py` | Docker fake backend, client-side internet image API demo, and browser demo path |
+| Boss-demo quickstart | Implemented | `QUICKSTART.md`, `scripts/demo_api_internet_image.py`, `tests/test_demo_api_internet_image.py` | Primary path is real YOLO Docker backend with `mock=false`; fake backend is fallback/developer smoke only |
 | Security hardening | Missing | None | Not implemented |
 | OpenAI Python example | Missing | None | Not verified |
 | Manual YOLO smoke test | Smoke verified | `scripts/smoke_yolo.py`, `scripts/smoke_chat_yolo.py` | Manual-only; both direct and API smokes completed locally on 2026-06-15 |

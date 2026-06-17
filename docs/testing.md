@@ -142,6 +142,9 @@ YOLO_SERVICE_API_KEY=change-me-local-dev-key \
 python scripts/demo_api_internet_image.py
 ```
 
+In the real YOLO Docker quickstart, this script is expected to return `mock=false`
+and a non-zero detection count for the default bus image.
+
 Normal CI does not depend on internet access. Tests monkeypatch network calls and cover
 the default image URL, JPEG/PNG encoding, unsupported content rejection, request
 construction, safe summary/error output, and network error handling:
