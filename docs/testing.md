@@ -128,6 +128,28 @@ payload output:
 python -m pytest tests/test_detect_image_script.py
 ```
 
+### Internet-image boss demo tests
+
+`scripts/demo_api_internet_image.py` is a user-facing demo script for boss demos. It
+downloads a fixed public image client-side, validates it as JPEG or PNG with Pillow,
+base64-encodes it, and calls `POST /v1/vision/detections`.
+
+Usage against a running local or Docker service:
+
+```bash
+YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/demo_api_internet_image.py
+```
+
+Normal CI does not depend on internet access. Tests monkeypatch network calls and cover
+the default image URL, JPEG/PNG encoding, unsupported content rejection, request
+construction, safe summary/error output, and network error handling:
+
+```bash
+python -m pytest tests/test_demo_api_internet_image.py
+```
+
 ### Browser demo tests
 
 The browser demo baseline has static route tests:

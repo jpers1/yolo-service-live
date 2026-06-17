@@ -39,7 +39,7 @@ docs/decisions/
 
 ## Current implementation state
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, boss-demo quickstart, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Implemented in PR #2:
 
@@ -79,6 +79,7 @@ Implemented after the skeleton:
 - `compose.yaml`
 - `scripts/check.sh`
 - `scripts/detect_image.py`
+- `scripts/demo_api_internet_image.py`
 - `scripts/smoke_http_vision.py`
 - `scripts/smoke_demo_static.py`
 - `scripts/smoke_yolo.py`
@@ -117,6 +118,8 @@ Implemented after the skeleton:
 - browser demo route tests and static smoke script
 - local-image CLI demo for sending JPEG/PNG files from disk to `/v1/vision/detections`
 - local-image CLI helper tests
+- boss-demo quickstart in `QUICKSTART.md`
+- internet-image API demo script that downloads image data client-side and calls `/v1/vision/detections`
 - real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
