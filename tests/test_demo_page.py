@@ -32,6 +32,12 @@ def test_demo_static_assets_are_served() -> None:
     assert css_response.status_code == 200
     assert "getUserMedia" in js_response.text
     assert "/v1/vision/detections" in js_response.text
+    assert "getDisplayedVideoRect" in js_response.text
+    assert "box_normalized_xyxy" in js_response.text
+    assert "videoRect.x + x1 * videoRect.width" in js_response.text
+    assert "videoRect.y + y1 * videoRect.height" in js_response.text
+    assert "x1 * overlay.width" not in js_response.text
+    assert "y1 * overlay.height" not in js_response.text
 
 
 def test_demo_has_start_stop_controls_and_api_key_warning() -> None:

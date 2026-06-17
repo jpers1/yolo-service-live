@@ -143,7 +143,9 @@ The Compose service also serves `/demo`.
 The real YOLO build path is the primary boss-test path and is heavier:
 
 ```bash
-docker build -t yolo-service-live:yolo --build-arg INSTALL_TARGET='.[yolo]' .
+sudo env DOCKER_BUILDKIT=1 docker build \
+  -t yolo-service-live:yolo \
+  --build-arg INSTALL_TARGET='.[yolo]' .
 docker run --rm -p 8000:8000 \
   -e YOLO_SERVICE_API_KEY=change-me-local-dev-key \
   -e YOLO_SERVICE_DETECTOR_BACKEND=yolo \
@@ -160,6 +162,10 @@ python scripts/smoke_http_vision.py
 ```
 
 First YOLO inference may download `yolo11n.pt`. PyPI may pull large Torch runtime wheels, including CUDA-named wheels, even though this service forces inference to CPU.
+
+Use BuildKit for normal YOLO rebuilds so pip can reuse cached wheel artifacts.
+Do not use `docker build --no-cache` for normal rebuilds; reserve it only for
+explicit Docker cache-corruption debugging.
 
 The Docker image installs the native runtime libraries needed by OpenCV and
 Ultralytics, including `libgl1`, `libglib2.0-0`, `libgomp1`, `libsm6`,

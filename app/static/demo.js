@@ -17,12 +17,17 @@ let stream = null;
 let running = false;
 let inFlight = false;
 let timerId = null;
+let lastPayload = null;
 
 startButton.addEventListener("click", startDemo);
 stopButton.addEventListener("click", stopDemo);
+video.addEventListener("loadedmetadata", () => {
+  syncOverlaySize();
+  redrawLastDetections();
+});
 window.addEventListener("resize", () => {
   syncOverlaySize();
-  clearOverlay();
+  redrawLastDetections();
 });
 
 async function startDemo() {
@@ -63,6 +68,7 @@ function stopDemo() {
   }
   stopTracks();
   clearOverlay();
+  lastPayload = null;
   startButton.disabled = false;
   stopButton.disabled = true;
   cameraStatus.textContent = "stopped";
@@ -164,49 +170,104 @@ function syncOverlaySize() {
   overlay.height = Math.max(1, Math.round(rect.height * pixelRatio));
   overlay.style.width = `${rect.width}px`;
   overlay.style.height = `${rect.height}px`;
+  overlayContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 }
 
 function clearOverlay() {
-  overlayContext.clearRect(0, 0, overlay.width, overlay.height);
+  const size = overlayCssSize();
+  overlayContext.clearRect(0, 0, size.width, size.height);
+}
+
+function redrawLastDetections() {
+  if (lastPayload) {
+    drawDetections(lastPayload);
+    return;
+  }
+  clearOverlay();
 }
 
 function drawDetections(payload) {
+  lastPayload = payload;
   syncOverlaySize();
   clearOverlay();
   overlayContext.lineWidth = 3;
   overlayContext.strokeStyle = "#f6d365";
   overlayContext.fillStyle = "#f6d365";
   overlayContext.font = "16px Trebuchet MS, sans-serif";
+  const videoRect = getDisplayedVideoRect(video, overlay);
 
   for (const detection of payload.detections) {
-    const box = displayBox(detection, payload.source);
+    const box = displayBox(detection, payload.source, videoRect);
     overlayContext.strokeRect(box.x, box.y, box.width, box.height);
     const confidence = Math.round(detection.confidence * 100);
     const label = `${detection.class_name} ${confidence}%`;
-    const labelY = Math.max(18, box.y - 8);
+    const labelY = Math.max(videoRect.y + 18, box.y - 8);
     overlayContext.fillText(label, box.x, labelY);
   }
 }
 
-function displayBox(detection, source) {
+function displayBox(detection, source, videoRect) {
   if (Array.isArray(detection.box_normalized_xyxy)) {
     const [x1, y1, x2, y2] = detection.box_normalized_xyxy;
     return {
-      x: x1 * overlay.width,
-      y: y1 * overlay.height,
-      width: (x2 - x1) * overlay.width,
-      height: (y2 - y1) * overlay.height,
+      x: videoRect.x + x1 * videoRect.width,
+      y: videoRect.y + y1 * videoRect.height,
+      width: (x2 - x1) * videoRect.width,
+      height: (y2 - y1) * videoRect.height,
     };
   }
 
   const [x1, y1, x2, y2] = detection.box_xyxy;
-  const sourceWidth = source.width || overlay.width;
-  const sourceHeight = source.height || overlay.height;
+  const sourceWidth = source.width || videoRect.width;
+  const sourceHeight = source.height || videoRect.height;
   return {
-    x: (x1 / sourceWidth) * overlay.width,
-    y: (y1 / sourceHeight) * overlay.height,
-    width: ((x2 - x1) / sourceWidth) * overlay.width,
-    height: ((y2 - y1) / sourceHeight) * overlay.height,
+    x: videoRect.x + (x1 / sourceWidth) * videoRect.width,
+    y: videoRect.y + (y1 / sourceHeight) * videoRect.height,
+    width: ((x2 - x1) / sourceWidth) * videoRect.width,
+    height: ((y2 - y1) / sourceHeight) * videoRect.height,
+  };
+}
+
+function getDisplayedVideoRect(videoElement, canvasElement) {
+  const size = overlayCssSize(canvasElement);
+  const canvasWidth = size.width;
+  const canvasHeight = size.height;
+  const videoWidth = videoElement.videoWidth;
+  const videoHeight = videoElement.videoHeight;
+
+  if (!canvasWidth || !canvasHeight || !videoWidth || !videoHeight) {
+    return { x: 0, y: 0, width: canvasWidth, height: canvasHeight };
+  }
+
+  const canvasAspect = canvasWidth / canvasHeight;
+  const videoAspect = videoWidth / videoHeight;
+
+  if (canvasAspect > videoAspect) {
+    const height = canvasHeight;
+    const width = height * videoAspect;
+    return {
+      x: (canvasWidth - width) / 2,
+      y: 0,
+      width,
+      height,
+    };
+  }
+
+  const width = canvasWidth;
+  const height = width / videoAspect;
+  return {
+    x: 0,
+    y: (canvasHeight - height) / 2,
+    width,
+    height,
+  };
+}
+
+function overlayCssSize(canvasElement = overlay) {
+  const rect = canvasElement.getBoundingClientRect();
+  return {
+    width: canvasElement.clientWidth || rect.width || canvasElement.width,
+    height: canvasElement.clientHeight || rect.height || canvasElement.height,
   };
 }
 

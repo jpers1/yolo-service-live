@@ -38,10 +38,15 @@ python -m pip install -e ".[dev]"
 ## Step 1 - Build Real YOLO Docker Image
 
 ```bash
-sudo docker build -t yolo-service-live:yolo --build-arg INSTALL_TARGET='.[yolo]' .
+sudo env DOCKER_BUILDKIT=1 docker build \
+  -t yolo-service-live:yolo \
+  --build-arg INSTALL_TARGET='.[yolo]' .
 ```
 
 This can take several minutes because Torch and Ultralytics wheels are large.
+The Dockerfile uses a BuildKit pip cache mount for repeated rebuilds. Do not use
+`docker build --no-cache` for normal rebuilds; reserve it only for explicitly
+debugging cache corruption.
 
 ## Step 2 - Run Real YOLO Backend
 
@@ -195,10 +200,13 @@ Meaning:
 Fix:
 
 ```bash
-sudo docker build --no-cache -t yolo-service-live:yolo --build-arg INSTALL_TARGET='.[yolo]' .
+sudo env DOCKER_BUILDKIT=1 docker build \
+  -t yolo-service-live:yolo \
+  --build-arg INSTALL_TARGET='.[yolo]' .
 ```
 
-Then rerun the real container.
+Then rerun the real container. Use `--no-cache` only if you are explicitly
+debugging Docker cache corruption.
 
 ### `mock=true`
 
@@ -225,6 +233,12 @@ Fix:
 - Real YOLO may return zero detections if the camera view has no recognizable COCO object.
 - First prove the real backend using the internet-image script.
 - Then aim camera at person, chair, laptop, bottle, cup, book, keyboard, mouse, backpack, car, or bicycle.
+
+### Boxes Extend Into Black Side Bands
+
+This should be fixed. The browser overlay compensates for letterboxing and
+pillarboxing by drawing boxes inside the actual displayed camera image rectangle,
+not the full canvas.
 
 ## Optional Fallback: Fake Backend Wiring Smoke
 

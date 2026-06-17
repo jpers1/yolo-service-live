@@ -39,7 +39,7 @@ docs/decisions/
 
 ## Current implementation state
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, real YOLO boss-demo quickstart, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction with fake and YOLO backends, Docker deployment baseline with BuildKit pip caching, browser demo baseline with letterbox-aware overlay geometry, local-image CLI demo, real YOLO boss-demo quickstart, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Implemented in PR #2:
 
@@ -110,12 +110,15 @@ Implemented after the skeleton:
 - Docker fake-backend image build path
 - optional manual YOLO Docker build path
 - OpenCV/Ultralytics native runtime libraries included in the Docker image for YOLO backend use
+- BuildKit pip cache mount for repeated Docker rebuilds
+- Docker pip install does not use `--no-cache-dir`
 - Compose fake-backend baseline
 - HTTP smoke script for running service/container
 - CI fake-backend Docker smoke job
 - browser demo at `GET /demo`
 - browser demo static assets under `/demo-static/`
 - browser demo native endpoint loop with one in-flight request maximum
+- browser demo overlay compensates for letterboxing and pillarboxing when drawing detection boxes
 - browser demo route tests and static smoke script
 - local-image CLI demo for sending JPEG/PNG files from disk to `/v1/vision/detections`
 - local-image CLI helper tests
@@ -142,7 +145,7 @@ Implemented after the skeleton:
 - focused model-list tests
 - focused native vision detection tests
 
-Normal CI avoids real YOLO downloads by using fake detectors and fake YOLO model objects. CI also builds and smokes the fake-backend Docker image. Manual smoke verification on 2026-06-15 completed direct detector and chat-completions YOLO runtime paths with `mock=false` in the API response. PR #18 added the OS shared libraries required for OpenCV/Ultralytics imports in the manual YOLO container path and verified the real YOLO Docker backend with `mock=false`. The current required boss-test path is the real YOLO Docker backend; the fake backend is fallback/developer smoke only.
+Normal CI avoids real YOLO downloads by using fake detectors and fake YOLO model objects. CI also builds and smokes the fake-backend Docker image. Manual smoke verification on 2026-06-15 completed direct detector and chat-completions YOLO runtime paths with `mock=false` in the API response. PR #18 added the OS shared libraries required for OpenCV/Ultralytics imports in the manual YOLO container path and verified the real YOLO Docker backend with `mock=false`. PR #19 made the required boss-test path the real YOLO Docker backend; the fake backend is fallback/developer smoke only. Current Docker rebuilds should use BuildKit so pip can reuse cached Torch/Ultralytics artifacts.
 
 ## Next step
 
