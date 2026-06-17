@@ -63,8 +63,9 @@ class YoloDetector(Detector):
                 from ultralytics import YOLO
             except ImportError as exc:
                 raise DetectorUnavailableError(
-                    'Ultralytics is not installed. Install YOLO extras first: '
-                    'python -m pip install -e ".[yolo]".'
+                    "YOLO backend could not import Ultralytics or one of its native "
+                    "dependencies. Install the optional yolo extra and required "
+                    "OpenCV runtime libraries."
                 ) from exc
 
             loader = YOLO
@@ -74,7 +75,11 @@ class YoloDetector(Detector):
         except DetectorUnavailableError:
             raise
         except ImportError as exc:
-            raise DetectorUnavailableError("YOLO detector dependency is not available.") from exc
+            raise DetectorUnavailableError(
+                "YOLO backend could not import Ultralytics or one of its native "
+                "dependencies. Install the optional yolo extra and required "
+                "OpenCV runtime libraries."
+            ) from exc
         except Exception as exc:
             raise DetectorUnavailableError("YOLO detector could not be initialized.") from exc
 

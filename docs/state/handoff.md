@@ -109,6 +109,7 @@ Implemented after the skeleton:
 - manual native YOLO vision smoke script
 - Docker fake-backend image build path
 - optional manual YOLO Docker build path
+- OpenCV/Ultralytics native runtime libraries included in the Docker image for YOLO backend use
 - Compose fake-backend baseline
 - HTTP smoke script for running service/container
 - CI fake-backend Docker smoke job
@@ -140,7 +141,7 @@ Implemented after the skeleton:
 - focused model-list tests
 - focused native vision detection tests
 
-Normal CI avoids real YOLO downloads by using fake detectors and fake YOLO model objects. CI also builds and smokes the fake-backend Docker image. Manual smoke verification on 2026-06-15 completed direct detector and chat-completions YOLO runtime paths with `mock=false` in the API response.
+Normal CI avoids real YOLO downloads by using fake detectors and fake YOLO model objects. CI also builds and smokes the fake-backend Docker image. Manual smoke verification on 2026-06-15 completed direct detector and chat-completions YOLO runtime paths with `mock=false` in the API response. The Docker image now includes the OS shared libraries required for OpenCV/Ultralytics imports in the manual YOLO container path.
 
 ## Next step
 

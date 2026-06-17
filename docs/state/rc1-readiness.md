@@ -27,7 +27,7 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | Fake detector tests | Implemented | `app/vision/fake_detector.py`, `tests/test_detector.py` | Placeholder detector for chat contract only |
 | Real YOLO11n CPU inference | Smoke verified | `app/vision/yolo_detector.py`, `tests/test_yolo_detector.py`, `scripts/smoke_yolo.py`, `scripts/smoke_chat_yolo.py` | Optional YOLO backend runs on CPU; manual direct and API smokes completed locally; normal CI uses fake model objects |
 | Native detection endpoint | Implemented | `app/api/vision.py`, `app/schemas/vision.py`, `tests/test_vision_detections.py` | Returns detection payload directly using shared decoder and detector path |
-| Docker | Implemented | `Dockerfile`, `.dockerignore`, `compose.yaml`, `scripts/smoke_http_vision.py` | Fake-backend Docker smoke in CI; YOLO Docker path documented/manual |
+| Docker | Implemented | `Dockerfile`, `.dockerignore`, `compose.yaml`, `scripts/smoke_http_vision.py` | Fake-backend Docker smoke in CI; YOLO Docker path includes OpenCV/Ultralytics native runtime libraries |
 | CI | Implemented | `.github/workflows/ci.yml` | Ruff plus pytest coverage on PRs and `main` |
 | Browser demo | Implemented | `app/api/demo.py`, `app/static/demo.html`, `tests/test_demo_page.py` | Plain HTML/CSS/JS local demo for native endpoint |
 | CPU backpressure | Implemented | `app/static/demo.js`, `docs/browser-demo.md` | One in-flight request maximum; no request backlog |

@@ -159,6 +159,12 @@ python scripts/smoke_http_vision.py
 
 First YOLO inference may download `yolo11n.pt`. PyPI may pull large Torch runtime wheels, including CUDA-named wheels, even though this service forces inference to CPU.
 
+The Docker image installs the native runtime libraries needed by OpenCV and
+Ultralytics, including `libgl1`, `libglib2.0-0`, `libgomp1`, `libsm6`,
+`libxext6`, `libxrender1`, and `libxcb1`. If a custom image reports a missing
+shared library such as `libxcb.so.1` while importing `cv2`, rebuild from the
+current Dockerfile or install the equivalent OS package.
+
 The browser demo can target the YOLO-backed container, but first inference may be slow
 because the model may download and CPU inference is synchronous.
 
