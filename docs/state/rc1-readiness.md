@@ -4,7 +4,7 @@ Status: not started.
 
 ## Summary
 
-RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, safe base64 JPEG/PNG image decoding, a detector abstraction with fake and YOLO backends, and CI-backed test coverage, but no native vision endpoint, Docker, or browser demo yet.
+RC1 is not ready. The repository has the initial FastAPI service shell, typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG image decoding, a detector abstraction with fake and YOLO backends, and CI-backed test coverage, but no Docker or browser demo yet.
 
 ## Readiness matrix
 
@@ -26,7 +26,7 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 | Detector abstraction | Implemented | `app/vision/detector.py`, `app/vision/fake_detector.py`, `tests/test_detector.py` | Chat endpoint uses app-state detector interface with fake detector |
 | Fake detector tests | Implemented | `app/vision/fake_detector.py`, `tests/test_detector.py` | Placeholder detector for chat contract only |
 | Real YOLO11n CPU inference | Smoke verified | `app/vision/yolo_detector.py`, `tests/test_yolo_detector.py`, `scripts/smoke_yolo.py`, `scripts/smoke_chat_yolo.py` | Optional YOLO backend runs on CPU; manual direct and API smokes completed locally; normal CI uses fake model objects |
-| Native detection endpoint | Missing | None | Not implemented |
+| Native detection endpoint | Implemented | `app/api/vision.py`, `app/schemas/vision.py`, `tests/test_vision_detections.py` | Returns detection payload directly using shared decoder and detector path |
 | Docker | Missing | None | Not implemented |
 | CI | Implemented | `.github/workflows/ci.yml` | Ruff plus pytest coverage on PRs and `main` |
 | Browser demo | Missing | None | Not implemented |
@@ -40,7 +40,7 @@ RC1 is not ready. The repository has the initial FastAPI service shell, typed co
 
 - No deployment artifact.
 - No browser demo.
-- Native `/v1/vision/detections` endpoint is not implemented.
+- Streaming/WebSocket is not implemented.
 - License review not complete for commercial/closed deployment.
 
 ## RC1 exit criteria

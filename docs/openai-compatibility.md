@@ -61,6 +61,8 @@ For MVP, the text prompt may be accepted as part of the OpenAI request shape, bu
 
 The assistant message `content` should be structured JSON containing detection results.
 
+`POST /v1/vision/detections` is a service-native endpoint for browser/demo clients. It is not part of the OpenAI API surface and returns detection JSON directly instead of an OpenAI chat-completion envelope.
+
 ## Image input basis
 
 The OpenAI chat-completions API documents image content parts using `image_url`, where the `url` field can be either an image URL or base64 encoded image data. OpenAI's vision guide shows examples using `data:image/jpeg;base64,...`.

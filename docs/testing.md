@@ -71,6 +71,13 @@ python -m pip install -e ".[dev,yolo]"
 python scripts/smoke_chat_yolo.py
 ```
 
+The current native vision endpoint smoke command is:
+
+```bash
+python -m pip install -e ".[dev,yolo]"
+python scripts/smoke_vision_yolo.py
+```
+
 These scripts may trigger model download on first run. They are not part of normal CI.
 
 Last local verification on 2026-06-15 completed both manual YOLO smokes against a generated 64x64 JPEG image. The direct detector smoke and API chat smoke both completed on CPU with `detections=0`; the API smoke verified `mock=false`.

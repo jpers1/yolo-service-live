@@ -4,7 +4,7 @@ Last updated: 2026-06-15
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions` with safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -26,10 +26,12 @@ Merged PR #10 added the detector abstraction and wired chat-completions through 
 
 Merged PR #11 added the lazy-loading YOLO11n CPU detector backend, optional `yolo` dependency extra, and direct manual YOLO smoke script.
 
+Merged PR #12 added API-level YOLO chat smoke verification and documented local real-runtime evidence.
+
 Current baseline merge commit:
 
 ```text
-b47e492a3118050e387feadef892f5b5f180fe97
+95d459d3c7402de7a23f41ae732824fd789469c1
 ```
 
 ## Product goal
@@ -50,7 +52,7 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 6: Real YOLO.
+Phase 7: Native vision endpoint.
 
 ## Implemented
 
@@ -76,8 +78,10 @@ Phase 6: Real YOLO.
 - `app/__init__.py`
 - `app/api/__init__.py`
 - `app/api/chat.py`
+- `app/api/detection_common.py`
 - `app/api/health.py`
 - `app/api/models.py`
+- `app/api/vision.py`
 - `app/auth.py`
 - `app/config.py`
 - `app/errors.py`
@@ -85,6 +89,7 @@ Phase 6: Real YOLO.
 - `app/schemas/__init__.py`
 - `app/schemas/detections.py`
 - `app/schemas/openai.py`
+- `app/schemas/vision.py`
 - `app/vision/__init__.py`
 - `app/vision/detector.py`
 - `app/vision/fake_detector.py`
@@ -100,9 +105,11 @@ Phase 6: Real YOLO.
 - `tests/test_health.py`
 - `tests/test_image_decode.py`
 - `tests/test_models.py`
+- `tests/test_vision_detections.py`
 - `tests/test_yolo_detector.py`
 - `scripts/smoke_yolo.py`
 - `scripts/smoke_chat_yolo.py`
+- `scripts/smoke_vision_yolo.py`
 - minimal FastAPI app factory
 - module-level `app`
 - typed settings loaded from `YOLO_SERVICE_` environment variables and optional `.env`
@@ -114,7 +121,9 @@ Phase 6: Real YOLO.
 - minimal OpenAI-like error helper for auth/config failures
 - protected `GET /v1/models`
 - protected `POST /v1/chat/completions`
+- protected native `POST /v1/vision/detections`
 - OpenAI-like chat request and response schemas
+- native vision detection request schema
 - mocked detector response marked with `"mock": true`
 - detector abstraction for decoded images
 - fake detector object used by the chat-completions endpoint
@@ -125,6 +134,7 @@ Phase 6: Real YOLO.
 - YOLO backend returns `mock: false`
 - manual real-model smoke script
 - manual API-level YOLO chat-completions smoke script
+- manual native YOLO vision smoke script
 - real YOLO runtime verified locally on CPU with generated 64x64 JPEG smoke inputs
 - image URL content part extraction
 - safe base64 JPEG/PNG data URL decoding
@@ -151,9 +161,9 @@ Phase 6: Real YOLO.
 
 ## Not implemented yet
 
-- Native detection endpoint.
 - Docker.
 - Browser demo.
+- Streaming or WebSocket.
 
 ## Current hard constraints
 
@@ -170,16 +180,16 @@ Phase 6: Real YOLO.
 
 ## Next recommended task
 
-Add native `/v1/vision/detections` endpoint using the existing image decoder and detector abstraction.
+Add Dockerfile plus deployment documentation, or start the browser demo after a strategic review decision.
 
 Suggested branch:
 
 ```text
-feature/012-native-vision-detections
+feature/014-docker-deployment
 ```
 
 Suggested commit message:
 
 ```text
-Add native vision detections endpoint
+Add Docker deployment support
 ```

@@ -3,6 +3,12 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request
 
+from app.api.detection_common import (
+    decode_request_image,
+    enforce_request_size,
+    run_detector,
+    validate_model,
+)
 from app.auth import get_app_settings, require_api_key
 from app.config import Settings
 from app.errors import openai_error
@@ -13,12 +19,6 @@ from app.schemas.openai import (
     ChatCompletionsRequest,
     ChatContentPart,
 )
-from app.vision.detector import (
-    DetectorInferenceError,
-    DetectorUnavailableError,
-    get_app_detector,
-)
-from app.vision.image_decode import ImageDecodeError, decode_image_data_url
 
 router = APIRouter(prefix="/v1", dependencies=[Depends(require_api_key)])
 
@@ -29,13 +29,7 @@ async def create_chat_completion(
     request: ChatCompletionsRequest,
     settings: Annotated[Settings, Depends(get_app_settings)],
 ) -> ChatCompletionResponse:
-    if len(await http_request.body()) > settings.max_request_bytes:
-        raise openai_error(
-            status_code=413,
-            message="Request payload is too large.",
-            error_type="invalid_request_error",
-            code="payload_too_large",
-        )
+    await enforce_request_size(http_request, settings)
 
     if request.stream:
         raise _invalid_request(
@@ -43,11 +37,7 @@ async def create_chat_completion(
             code="streaming_not_supported",
         )
 
-    if request.model != settings.public_model_name:
-        raise _invalid_request(
-            message="The requested model is not supported.",
-            code="unsupported_model",
-        )
+    validate_model(requested_model=request.model, settings=settings)
 
     image_parts = _image_content_parts(request)
     if not image_parts:
@@ -68,40 +58,12 @@ async def create_chat_completion(
             code="missing_image",
         )
 
-    try:
-        decoded_image = decode_image_data_url(
-            image_url.url,
-            max_request_bytes=settings.max_request_bytes,
-            max_image_pixels=settings.max_image_pixels,
-        )
-    except ImageDecodeError as exc:
-        raise openai_error(
-            status_code=exc.status_code,
-            message=exc.message,
-            error_type="invalid_request_error",
-            code=exc.code,
-        ) from exc
-
-    detector = get_app_detector(http_request)
-    try:
-        detection_payload = detector.detect(
-            model=settings.public_model_name,
-            image=decoded_image,
-        )
-    except DetectorUnavailableError as exc:
-        raise openai_error(
-            status_code=503,
-            message="Detector backend is not available.",
-            error_type="server_error",
-            code="detector_not_available",
-        ) from exc
-    except DetectorInferenceError as exc:
-        raise openai_error(
-            status_code=500,
-            message="Detector inference failed.",
-            error_type="server_error",
-            code="inference_failed",
-        ) from exc
+    decoded_image = decode_request_image(image_url=image_url.url, settings=settings)
+    detection_payload = run_detector(
+        http_request=http_request,
+        image=decoded_image,
+        model=settings.public_model_name,
+    )
     assistant_content = json.dumps(detection_payload.model_dump(), separators=(",", ":"))
 
     return ChatCompletionResponse(

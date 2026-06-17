@@ -168,30 +168,39 @@ Purpose: native computer-vision endpoint.
 
 Requires auth.
 
-Planned request:
+Supported request:
 
 ```json
 {
+  "image": {
+    "url": "data:image/jpeg;base64,..."
+  },
   "model": "yolo11n-coco",
-  "image": "data:image/jpeg;base64,...",
-  "confidence": 0.25,
-  "iou": 0.70
+  "include_normalized_boxes": true
 }
 ```
 
-Planned response:
+Rules:
+
+- `model` defaults to `yolo11n-coco` when omitted.
+- Supplied `model` must match `yolo11n-coco`.
+- `image.url` follows the same base64 JPEG/PNG data URL rules as `/v1/chat/completions`.
+- Arbitrary external `http://` or `https://` image URLs are rejected in MVP.
+- The endpoint calls the same configured detector backend as `/v1/chat/completions`.
+- The response is the detection payload directly, not an OpenAI chat-completion envelope.
+
+Successful response:
 
 ```json
 {
   "task": "object_detection",
   "model": "yolo11n-coco",
-  "image": {
+  "source": {
+    "kind": "image_url",
+    "decoded": true,
+    "mime_type": "image/jpeg",
     "width": 640,
     "height": 480
-  },
-  "thresholds": {
-    "confidence": 0.25,
-    "iou": 0.70
   },
   "detections": [
     {
@@ -203,9 +212,7 @@ Planned response:
       "box_normalized_xyxy": [0.16, 0.12, 0.48, 0.96]
     }
   ],
-  "timing": {
-    "inference_ms": 123.4
-  }
+  "mock": false
 }
 ```
 

@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from app.api.chat import router as chat_router
 from app.api.health import router as health_router
 from app.api.models import router as models_router
+from app.api.vision import router as vision_router
 from app.config import Settings, get_settings
 from app.errors import OpenAIError, openai_error_handler
 from app.vision.detector import Detector, build_detector
@@ -23,6 +24,7 @@ def create_app(settings: Settings | None = None, detector: Detector | None = Non
     app.include_router(health_router)
     app.include_router(chat_router)
     app.include_router(models_router)
+    app.include_router(vision_router)
     return app
 
 
