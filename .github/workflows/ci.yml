@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Lint and test
@@ -57,11 +60,7 @@ jobs:
       - name: Wait for healthz
         run: |
           for attempt in {1..30}; do
-            if python - <<'PY'
-import urllib.request
-
-urllib.request.urlopen("http://127.0.0.1:8000/healthz", timeout=2).read()
-PY
+            if python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=2).read()"
             then
               exit 0
             fi
