@@ -84,7 +84,8 @@ Last local verification on 2026-06-15 completed both manual YOLO smokes against 
 
 ### Docker smoke tests
 
-The HTTP smoke script verifies a running service over real HTTP:
+The HTTP smoke script verifies a running service over real HTTP with a generated
+in-memory image:
 
 ```bash
 YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
@@ -105,6 +106,27 @@ docker run --rm -p 8000:8000 \
 ```
 
 Then run `scripts/smoke_http_vision.py` with the same API key.
+
+### Local-image CLI demo tests
+
+`scripts/detect_image.py` is a user-facing command-line demo. Unlike the smoke scripts,
+it loads a local JPEG or PNG file from disk, encodes it as a base64 data URL, and sends
+it to `POST /v1/vision/detections`.
+
+Usage:
+
+```bash
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/detect_image.py ./example.jpg --base-url http://127.0.0.1:8000
+```
+
+Helper-level tests cover local image encoding, unsupported image rejection, request
+construction, summary printing, OpenAI-like error handling, and avoiding API key/base64
+payload output:
+
+```bash
+python -m pytest tests/test_detect_image_script.py
+```
 
 ### Browser demo tests
 

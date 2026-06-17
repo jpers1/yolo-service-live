@@ -29,6 +29,16 @@ http://127.0.0.1:8000/demo
 
 Enter the API key in the browser page only for local/demo use.
 
+Use the local-image CLI demo against the running service:
+
+```bash
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/detect_image.py ./example.jpg --base-url http://127.0.0.1:8000
+```
+
+The script supports local `.jpg`, `.jpeg`, and `.png` files. It sends the image to
+`POST /v1/vision/detections` and prints a concise detection summary.
+
 ## Environment variables
 
 See `.env.example`.
@@ -78,6 +88,13 @@ Static demo assets can be checked with:
 ```bash
 YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
 python scripts/smoke_demo_static.py
+```
+
+The local-image CLI demo can target the same container:
+
+```bash
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/detect_image.py ./example.jpg --base-url http://127.0.0.1:8000
 ```
 
 ## Compose
