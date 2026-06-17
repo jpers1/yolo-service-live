@@ -151,6 +151,20 @@ http://127.0.0.1:8000
 
 Any widening of CORS must be documented.
 
+## Container security
+
+The Docker baseline follows these rules:
+
+- the container runs as a non-root user;
+- API keys are passed at runtime as environment variables;
+- `.env` is excluded from the Docker build context;
+- real secrets must not be baked into image layers;
+- uploaded images and request bodies are not persisted;
+- arbitrary external image URL fetching remains unsupported;
+- debug mode is not enabled;
+- `/healthz` and `/readyz` remain public;
+- `/v1/*` endpoints remain Bearer-authenticated.
+
 ## Fail-closed behavior
 
 Reject when uncertain:

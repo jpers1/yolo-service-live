@@ -1,18 +1,25 @@
 # Deployment
 
-Status: initial design.
+Status: Docker baseline.
 
 ## Local development
 
-Planned local run:
+Install the lightweight development dependencies and run with the fake detector:
 
 ```bash
-uv sync
-cp .env.example .env
-uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
+python -m pip install -e ".[dev]"
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+YOLO_SERVICE_DETECTOR_BACKEND=fake \
+uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-If `uv` is not used, plain `pip` installation may be documented later.
+Run the HTTP smoke from another shell:
+
+```bash
+YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/smoke_http_vision.py
+```
 
 ## Environment variables
 
@@ -22,36 +29,94 @@ Important variables:
 
 ```text
 YOLO_SERVICE_API_KEY
-YOLO_SERVICE_MODEL_NAME
-YOLO_SERVICE_MODEL_PATH
-YOLO_SERVICE_CONFIDENCE
-YOLO_SERVICE_IOU
+YOLO_SERVICE_DETECTOR_BACKEND
+YOLO_SERVICE_PUBLIC_MODEL_NAME
+YOLO_SERVICE_MODEL_WEIGHTS
+YOLO_SERVICE_DEFAULT_CONFIDENCE
 YOLO_SERVICE_MAX_REQUEST_BYTES
 YOLO_SERVICE_MAX_IMAGE_PIXELS
-YOLO_SERVICE_ALLOW_EXTERNAL_IMAGE_URLS
 ```
 
-## Docker
+Do not commit `.env` or real secrets.
 
-A CPU-only Dockerfile is planned before RC1.
+## Docker fake-backend baseline
 
-Rules:
-
-- no CUDA base image;
-- no NVIDIA runtime requirement;
-- API key passed by environment variable;
-- expose port 8000 by default;
-- do not bake secrets into image;
-- model download/cache behavior must be documented.
-
-Planned run:
+The default container path installs only the base package and uses the fake detector. It is CI-safe and does not install Ultralytics or download YOLO weights.
 
 ```bash
-docker build -t yolo-openai-vision-api .
+docker build -t yolo-service-live:fake --build-arg INSTALL_TARGET=. .
 docker run --rm -p 8000:8000 \
-  -e YOLO_SERVICE_API_KEY=dev-secret-change-me \
-  yolo-openai-vision-api
+  -e YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+  -e YOLO_SERVICE_DETECTOR_BACKEND=fake \
+  yolo-service-live:fake
 ```
+
+Smoke the running container:
+
+```bash
+YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/smoke_http_vision.py
+```
+
+## Compose
+
+The default Compose service uses the fake detector:
+
+```bash
+docker compose up --build
+```
+
+Then run:
+
+```bash
+YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/smoke_http_vision.py
+```
+
+## Manual YOLO container
+
+The YOLO build path is manual and heavier:
+
+```bash
+docker build -t yolo-service-live:yolo --build-arg INSTALL_TARGET='.[yolo]' .
+docker run --rm -p 8000:8000 \
+  -e YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+  -e YOLO_SERVICE_DETECTOR_BACKEND=yolo \
+  -e YOLO_SERVICE_MODEL_WEIGHTS=yolo11n.pt \
+  yolo-service-live:yolo
+```
+
+Smoke it with:
+
+```bash
+YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/smoke_http_vision.py
+```
+
+First YOLO inference may download `yolo11n.pt`. PyPI may pull large Torch runtime wheels, including CUDA-named wheels, even though this service forces inference to CPU.
+
+## Healthcheck
+
+The Docker image includes a healthcheck against:
+
+```text
+GET /healthz
+```
+
+`/healthz` and `/readyz` are public. All `/v1/*` endpoints remain authenticated.
+
+## Container security baseline
+
+- The image uses a Python slim base.
+- The app runs as a non-root user.
+- API keys must be passed at runtime as environment variables.
+- `.env` is excluded from the Docker build context.
+- Uploaded image bytes are decoded in memory only and are not persisted.
+- External image URL fetching remains unsupported.
+- No GPU, CUDA runtime, or NVIDIA container runtime is required.
 
 ## Production warnings
 

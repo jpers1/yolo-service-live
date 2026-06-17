@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Lint and test
@@ -29,3 +32,52 @@ jobs:
 
       - name: Run tests with coverage
         run: python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=80
+
+  docker-smoke:
+    name: Docker fake-backend smoke
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python for smoke script
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build fake-backend image
+        run: docker build -t yolo-service-live:fake --build-arg INSTALL_TARGET=. .
+
+      - name: Run fake-backend container
+        run: |
+          docker run -d --rm --name yolo-service-live-ci-smoke \
+            -p 8000:8000 \
+            -e YOLO_SERVICE_API_KEY=ci-test-key \
+            -e YOLO_SERVICE_DETECTOR_BACKEND=fake \
+            yolo-service-live:fake
+
+      - name: Wait for healthz
+        run: |
+          for attempt in {1..30}; do
+            if python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=2).read()"
+            then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs yolo-service-live-ci-smoke
+          exit 1
+
+      - name: Install smoke dependency
+        run: python -m pip install "pillow>=10.0,<12.0"
+
+      - name: Run HTTP smoke
+        env:
+          YOLO_SERVICE_BASE_URL: http://127.0.0.1:8000
+          YOLO_SERVICE_API_KEY: ci-test-key
+        run: python scripts/smoke_http_vision.py
+
+      - name: Stop container
+        if: always()
+        run: docker stop yolo-service-live-ci-smoke || true

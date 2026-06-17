@@ -82,6 +82,30 @@ These scripts may trigger model download on first run. They are not part of norm
 
 Last local verification on 2026-06-15 completed both manual YOLO smokes against a generated 64x64 JPEG image. The direct detector smoke and API chat smoke both completed on CPU with `detections=0`; the API smoke verified `mock=false`.
 
+### Docker smoke tests
+
+The HTTP smoke script verifies a running service over real HTTP:
+
+```bash
+YOLO_SERVICE_BASE_URL=http://127.0.0.1:8000 \
+YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+python scripts/smoke_http_vision.py
+```
+
+Normal CI builds the Docker image with the fake detector path and runs this smoke against a container. CI does not install YOLO extras and does not download model weights.
+
+Manual YOLO Docker smoke is optional:
+
+```bash
+docker build -t yolo-service-live:yolo --build-arg INSTALL_TARGET='.[yolo]' .
+docker run --rm -p 8000:8000 \
+  -e YOLO_SERVICE_API_KEY=change-me-local-dev-key \
+  -e YOLO_SERVICE_DETECTOR_BACKEND=yolo \
+  yolo-service-live:yolo
+```
+
+Then run `scripts/smoke_http_vision.py` with the same API key.
+
 ### Browser demo tests
 
 Initial browser demo can be manually tested.
@@ -165,6 +189,8 @@ The baseline workflow runs:
 ```bash
 ruff check app tests
 python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=80
+docker build -t yolo-service-live:fake --build-arg INSTALL_TARGET=. .
+python scripts/smoke_http_vision.py
 ```
 
 Real model download should not be mandatory in first CI unless explicitly planned.
