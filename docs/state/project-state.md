@@ -4,7 +4,7 @@ Last updated: 2026-06-17
 
 ## Current truth
 
-The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, Docker deployment baseline, browser demo baseline, local-image CLI demo, real YOLO boss-demo quickstart, a full local check script, coverage baseline, and GitHub Actions CI.
+The repository now has an importable FastAPI service skeleton with typed configuration loading, public health/readiness endpoints, Bearer authentication for protected `/v1` endpoints, `GET /v1/models`, `POST /v1/chat/completions`, native `POST /v1/vision/detections`, safe base64 JPEG/PNG decoding, a detector abstraction, configurable fake/YOLO detector backends, Docker deployment baseline with BuildKit pip caching, browser demo baseline with letterbox-aware overlay geometry, local-image CLI demo, real YOLO boss-demo quickstart, a full local check script, coverage baseline, and GitHub Actions CI.
 
 Merged PR #2 added the minimal Python backend project structure and app factory, but no API behavior yet.
 
@@ -40,10 +40,12 @@ Merged PR #17 added the Docker boss-demo quickstart and internet-image API demo 
 
 Merged PR #18 fixed real YOLO Docker runtime libraries and verified the real YOLO Docker backend path with `mock=false`.
 
+Merged PR #19 refreshed the boss quickstart and README so the primary demo path is the real YOLO Docker backend.
+
 Current baseline merge commit:
 
 ```text
-5abca8ae14ae102f3f4d3a2723aaa54b2550ab31
+3824b7f706b734adeeea854d3d5f82cc46d5c946
 ```
 
 ## Product goal
@@ -64,7 +66,7 @@ yolo11n-coco
 
 ## Current phase
 
-Phase 13: Real YOLO boss quickstart.
+Phase 14: Browser overlay and Docker build-cache repair.
 
 ## Implemented
 
@@ -165,12 +167,15 @@ Phase 13: Real YOLO boss quickstart.
 - Docker fake-backend image build path
 - optional manual YOLO Docker build path
 - OpenCV/Ultralytics native runtime libraries in the Docker image for YOLO backend use
+- BuildKit pip cache mount for repeated Docker rebuilds
+- Docker pip install does not use `--no-cache-dir`
 - Compose fake-backend baseline
 - HTTP smoke script for running service/container
 - CI fake-backend Docker smoke job
 - browser demo at `GET /demo`
 - local browser demo static assets at `/demo-static/demo.css` and `/demo-static/demo.js`
 - browser demo camera preview, JPEG capture, native endpoint calls, and overlay rendering
+- browser demo overlay maps detections into the displayed video rectangle to handle letterboxing/pillarboxing
 - browser demo request-after-response loop with one in-flight request maximum
 - browser demo static route tests
 - browser demo static smoke script

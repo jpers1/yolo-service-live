@@ -139,12 +139,15 @@ builds the optional YOLO image, runs the real backend, and verifies
 Minimal build command:
 
 ```bash
-sudo docker build -t yolo-service-live:yolo --build-arg INSTALL_TARGET='.[yolo]' .
+sudo env DOCKER_BUILDKIT=1 docker build \
+  -t yolo-service-live:yolo \
+  --build-arg INSTALL_TARGET='.[yolo]' .
 ```
 
 First YOLO inference may download `yolo11n.pt`. PyPI may also pull large Torch
 runtime wheels, including CUDA-named wheels, even though inference is forced to
-CPU.
+CPU. The Dockerfile uses a BuildKit pip cache mount for repeated local rebuilds;
+do not use `docker build --no-cache` for normal rebuilds.
 
 ## Fake backend developer smoke
 

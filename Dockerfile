@@ -1,9 +1,11 @@
+# syntax=docker/dockerfile:1.6
+
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PIP_NO_CACHE_DIR=1
 ENV YOLO_CONFIG_DIR=/tmp/ultralytics
+ENV MPLCONFIGDIR=/tmp/matplotlib
 
 WORKDIR /app
 
@@ -24,10 +26,11 @@ COPY pyproject.toml README.md ./
 COPY app ./app
 
 ARG INSTALL_TARGET=.
-RUN python -m pip install --upgrade pip \
-    && python -m pip install --no-cache-dir "${INSTALL_TARGET}"
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install --upgrade pip \
+    && python -m pip install "${INSTALL_TARGET}"
 
-RUN mkdir -p /tmp/ultralytics && chown -R app:app /tmp/ultralytics /app
+RUN mkdir -p /tmp/ultralytics /tmp/matplotlib && chown -R app:app /tmp/ultralytics /tmp/matplotlib /app
 
 USER app
 

@@ -98,7 +98,9 @@ Normal CI builds the Docker image with the fake detector path and runs this smok
 Manual YOLO Docker smoke is optional:
 
 ```bash
-docker build -t yolo-service-live:yolo --build-arg INSTALL_TARGET='.[yolo]' .
+sudo env DOCKER_BUILDKIT=1 docker build \
+  -t yolo-service-live:yolo \
+  --build-arg INSTALL_TARGET='.[yolo]' .
 docker run --rm -p 8000:8000 \
   -e YOLO_SERVICE_API_KEY=change-me-local-dev-key \
   -e YOLO_SERVICE_DETECTOR_BACKEND=yolo \
@@ -106,6 +108,11 @@ docker run --rm -p 8000:8000 \
 ```
 
 Then run `scripts/smoke_http_vision.py` with the same API key.
+
+The Dockerfile intentionally uses a BuildKit pip cache mount and does not use
+`--no-cache-dir` for Python package installation. Do not use `docker build
+--no-cache` for normal YOLO rebuilds; use it only when explicitly debugging
+Docker cache corruption.
 
 ### Local-image CLI demo tests
 
@@ -178,6 +185,10 @@ Later optional tests:
 
 - canvas overlay logic can be unit-tested separately if worthwhile.
 - headless browser rendering with fake media devices.
+
+The current browser overlay maps detection boxes into the actual displayed video
+rectangle, so letterboxing or pillarboxing should not cause boxes to extend into
+black side bands.
 
 ## Required commands
 
